@@ -55,23 +55,39 @@ export const submitCode = async(req, res) => {
             }
         });
 
-        console.log(detailedResults);
+        console.log("Detailed Results : \n",detailedResults);
+
+        console.log("lang id bro : ",getLanguage(language_id))
+
+        console.log("this is soucre code : ", source_code, typeof(source_code));
+
+        const maxTimeArray = detailedResults.map((r) => parseFloat(r.time || "0"));
+        const maxTimeValueInS = Math.max(...maxTimeArray);
+        const maxTimeValueInMs = (maxTimeValueInS * 1000).toFixed(3);
+
+        const maxMemoryArray = detailedResults.map((r) => parseFloat(r.memory || "0"));
+        const maxMemoryValueInKb = Math.max(...maxMemoryArray);
+        const maxMemoryValueInMb = (maxMemoryValueInKb / 1024).toFixed(3);
 
         const codeSubmission = await db.submission.create({
             data: {
                 userId,
                 problemId,
                 language: getLanguage(language_id),
-                source_code,
-                time: "Dont know",
-                memory: "Dont know",
+                sourceCode: { code: source_code },
+                time: `${maxTimeValueInMs} ms`,
+                memory: `${maxMemoryValueInMb} MB`,
                 status: detailedResults.map((r) => r.status).join("\n"),
             }
         });
 
+        console.log(codeSubmission)
+
+        console.log('test message 1')
+
         if(accepted) {
             // upsert -> creates a record if it doesn’t exist, or updates it if it does
-            await db.user.solvedProblems.upsert({
+            await db.solvedProblems.upsert({
                 where: {
                     userId_problemId: {
                         userId,
@@ -86,22 +102,26 @@ export const submitCode = async(req, res) => {
             });
         }
 
-        const testCaseResults = detailedResults.map((result) => ({
+        console.log('test message 2')
+
+        const testcaseResults = detailedResults.map((result) => ({
             submissionId: codeSubmission.id,
-            testCaseNumber: result.testcase,
+            testcaseNumber: result.testcase,
             accepted: result.status === "Accepted" ? true : false,
-            stdin: result.stdin,
-            stdout: result.stdout,
+            stdin: `${result.stdin}`,
+            stdout: `${result.stdout}`,
             stderr: result.stderr,
-            compile_output: result.compile_output,
+            compileOutput: result.compile_output,
             status: result.status,
             time: result.time,
             memory: result.memory,
         }));
 
-        await db.testCaseResult.createMany({
-            data: testCaseResults
+        await db.testcaseResult.createMany({
+            data: testcaseResults
         });
+
+        console.log('test message 3')
 
 
         const submissionWithTestCases = await db.submission.findUnique({
@@ -110,10 +130,12 @@ export const submitCode = async(req, res) => {
             },
 
             include: {
-                testCaseResult: true
+                testcaseResult: true
             }
 
         });
+
+        console.log('test message 4')
 
         return res.status(200).json({
             success: true,
@@ -122,6 +144,7 @@ export const submitCode = async(req, res) => {
         });
 
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             error: "Error submitting code"
         });
@@ -129,19 +152,19 @@ export const submitCode = async(req, res) => {
 };
 
 
-export const getAllSubmissions = async(req, res) => {
+export const getAllSubmissionsByUser = async(req, res) => {
     const userId = req.user.id;
     try {
-        const submissionByUser = await db.submission.findMany({
+        const submissionsByUser = await db.submission.findMany({
             where: {
                 userId
             }
         });
 
-        return res.json(200).json({
+        return res.status(200).json({
             success: true,
             message: "Submissions fetched successfully",
-            submissionByUser
+            submissionsByUser
         });
     } catch (error) {
         console.log(error)
@@ -179,11 +202,11 @@ export const getSubmissions = async(req, res) => {
 };
 
 
-export const getSubmissionsCount = async(req, res) => {
+export const getSubmissionsCountForProblemByAllUsers = async(req, res) => {
     const problemId = req.params.id;
 
     try {
-        const submissionsCountForProblem = await db.submission.count({
+        const submissionsCountForProblemByAllUsers = await db.submission.count({
             where: {
                 problemId
             }
@@ -191,12 +214,49 @@ export const getSubmissionsCount = async(req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Submission count fetched successfully",
-            count: submissionsCountForProblem
+            message: "Submissions count fetched successfully",
+            count: submissionsCountForProblemByAllUsers
         });
     } catch (error) {
         return res.status(500).json({
-            error: "Error fetching total submission count"
+            error: "Error fetching total submission count for a problem by all users"
+        });
+    }
+};
+
+export const getTotalSubmissionsCountByUser = async(req, res) => {
+    const username = req.params.username;
+
+    try {
+
+        const user = await db.user.findUnique({
+            where: {
+                username
+            }
+        });
+
+        if(!user) {
+            return res.status(404).json({
+                error: "no user with given username"
+            });
+        }
+
+
+        const totalSubmissionsCountByUser = await db.submission.count({
+            where: {
+                userId: user.id
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Submissions count fetched successfully",
+            count: totalSubmissionsCountByUser
+        });
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            error: "Error fetching total submissions count by a user"
         });
     }
 };
