@@ -27,6 +27,7 @@ enum Difficulty {
 
 model User {
   id                String           @id @default(uuid())
+  username          String           @unique
   name              String?
   email             String           @unique
   avatar            String?
@@ -112,7 +113,7 @@ model SolvedProblems {
 
 model List {
   id          String           @id @default(uuid())
-  name        String
+  name        String           @unique
   description String
   userId      String
   problems    ProblemsinList[]
@@ -123,8 +124,8 @@ model List {
 
 model ProblemsinList {
   id        String   @id @default(uuid())
-  problemId String
   listId    String
+  problemId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
