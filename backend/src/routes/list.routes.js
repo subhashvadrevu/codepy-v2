@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
-import { addProblemToList, createList, deleteList, getAllListDetails, getListById, removeProblemFromList } from "../controllers/list.controllers";
+import { addProblemToList, createList, deleteList, getAllListDetails, getListById, removeProblemFromList } from "../controllers/list.controllers.js";
 
 const listRoutes = express.Router();
 
