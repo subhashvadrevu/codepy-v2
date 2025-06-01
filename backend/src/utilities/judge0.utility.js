@@ -23,10 +23,12 @@ export const getLanguage = (judge0Id) => {
 };
 
 export const createBatchSubmission = async(submissionsData) => {
+
+    // console.log(submissionsData)
     try {
         const result = await axios.post(
             `${process.env.JUDGE0_BASE_URL}/submissions/batch?base64_encoded=false`,
-            { submissionsData }
+            { submissions: submissionsData }
         );
 
         console.log("Submission Result :",result.data);
@@ -47,15 +49,18 @@ export const getBatchSubmissionResult = async(tokensArray) => {
 
     try {
 
-        do {
+        while (true){
             const result = await axios.get(
                 `${process.env.JUDGE0_BASE_URL}/submissions/batch?tokens=${tokensArray.join(",")}&base64_encoded=false`
             );
 
-            const submissionResults = result.submissions;
+            console.log("submission results:",result.data.submissions)
+
+            const submissionResults = result.data.submissions;
+            
             
             const allExecuted = submissionResults.every(
-                (res) => res.status_id !== 1 && res.status_id !== 2
+                (res) => res.status.id !== 1 && res.status.id !== 2
             );
 
             if(allExecuted) {
@@ -64,7 +69,7 @@ export const getBatchSubmissionResult = async(tokensArray) => {
 
             await sleep(1000);
 
-        } while (!allExecuted);
+        }
 
 
     } catch (error) {
