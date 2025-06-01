@@ -1,8 +1,20 @@
-import { db } from "../libs/db";
+import { db } from "../libs/db.js";
 
 export const createList = async(req, res) => {
     const userId = req.user.id;
     const { name, description } = req.body;
+
+    const existingList = await db.list.findUnique({
+        where: {
+            name
+        }
+    });
+
+    if(existingList) {
+        return res.status(400).json({
+            error: "List already exists"
+        });
+    }
 
     try {
         const list = await db.list.create({
@@ -34,9 +46,27 @@ export const createList = async(req, res) => {
 
 export const addProblemToList = async(req, res) => {
     const listId = req.params.id;
+    const { problemId } = req.body;
 
     try {
-        const addedProblem = await db.problemsInList.create({
+
+        const existingProblem = await db.problemsinList.findUnique({
+            where: { 
+                listId_problemId: {
+                    listId,
+                    problemId
+                }
+            }
+        });
+
+        if(existingProblem) {
+            return res.status(400).json({
+                error: "Problem is already in list"
+            });
+        }
+
+
+        const addedProblem = await db.problemsinList.create({
             data: {
                 listId,
                 problemId
@@ -56,6 +86,7 @@ export const addProblemToList = async(req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             error: "Error adding problem/problems to list"
         });
@@ -67,7 +98,7 @@ export const deleteList = async(req, res) => {
     const listId = req.params.id;
 
     try {
-        const deletedList = await db.problemsInList.delete({
+        const deletedList = await db.list.delete({
             where: {
                 id: listId
             }
@@ -85,6 +116,7 @@ export const deleteList = async(req, res) => {
             deletedList
         });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             error: "Error deleting list"
         });
@@ -97,11 +129,30 @@ export const removeProblemFromList = async(req, res) => {
     const problemId = req.body.problemId;
 
     try {
-        const removedProblem = await db.problemsInList.delete({
+
+        const existingProblem = await db.problemsinList.findUnique({
             where: {
-                listId,
-                problemId
+                listId_problemId: {
+                    listId,
+                    problemId
+                }
             }
+        });
+
+        if(!existingProblem) {
+            return res.status(400).json({
+                error: "Problem doesnot exist"
+            });
+        }
+
+        const removedProblem = await db.problemsinList.delete({
+            where: {
+                listId_problemId: {
+                    listId,
+                    problemId
+                }
+            } 
+            
         });
 
         if(!removedProblem) {
@@ -117,6 +168,7 @@ export const removeProblemFromList = async(req, res) => {
         });
         
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             error: "Error removing problem/problems from list"
         });
