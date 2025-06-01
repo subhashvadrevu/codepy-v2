@@ -25,6 +25,7 @@ export const register = async(req, res) => {
         const newUser = await db.user.create({
             data: {
                 email,
+                username: email.split("@")[0],
                 password: hashedPassword,
                 name,
                 role: UserRole.USER
@@ -48,6 +49,7 @@ export const register = async(req, res) => {
             message: "User created successfully",
             user: {
                 id: newUser.id,
+                username: newUser.username,
                 email: newUser.email,
                 name: newUser.name,
                 role: newUser.role,
@@ -104,6 +106,7 @@ export const login = async(req, res) => {
             message: "User login sucessful",
             user: {
                 id: existingUser.id,
+                username: existingUser.username,
                 email: existingUser.email,
                 name: existingUser.name,
                 role: existingUser.role,
@@ -153,5 +156,41 @@ export const me = async(req, res) => {
         return res.status(500).json({
             error: "Error fetching user details"
         })
+    }
+};
+
+export const deleteAccount = async(req, res) => {
+    const id = req.user.id;
+
+    try {
+        const user = await db.user.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if(!user) {
+            return res.status(500).json({
+                error: "Error deleting account"
+            });
+        }
+
+        const deletedAccount = await db.user.delete({
+            where: {
+                id
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Account deletion successful",
+            deletedAccount
+        });
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            error: "Error deleting account"
+        });
     }
 };
