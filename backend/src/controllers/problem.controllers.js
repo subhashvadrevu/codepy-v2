@@ -1,11 +1,10 @@
-import { UserRole } from "../generated/prisma/index.js";
 import { db } from "../libs/db.js";
 import { createBatchSubmission, getBatchSubmissionResult, getJudge0Id } from "../utilities/judge0.utility.js";
 
 export const createProblem = async(req, res) => {
     const { title, description, difficulty, tags, examples, constraints, testcases, codeSnippets, referenceSolutions } = req.body;
 
-    if(req.user.role !== UserRole.ADMIN) {
+    if(req.user.role !== "ADMIN") {
         return res.status(403).json({
             error: "Access denied"
         });
@@ -37,6 +36,7 @@ export const createProblem = async(req, res) => {
                 });
             }
 
+
             const tokensArray = tokens.map(({ token }) => token);
             const batchSubmissionResult = await getBatchSubmissionResult(tokensArray);
             
@@ -50,29 +50,28 @@ export const createProblem = async(req, res) => {
                     });
                 }
             }
-
-            const newProblem = await db.problem.create({
-                data: {
-                    title, 
-                    description, 
-                    difficulty, 
-                    tags, 
-                    userId: req.user.id,
-                    examples, 
-                    constraints, 
-                    testcases, 
-                    codeSnippets, 
-                    referenceSolutions
-                }
-            });
-
-            return res.status(201).json({
-                success: true, 
-                message: "Problem created successfully",
-                problem: newProblem
-            });
-            
         }
+
+        const newProblem = await db.problem.create({
+            data: {
+                title, 
+                description, 
+                difficulty, 
+                tags, 
+                userId: req.user.id,
+                examples, 
+                constraints, 
+                testcases, 
+                codeSnippets, 
+                referenceSolutions
+            }
+        });
+
+        return res.status(201).json({
+            success: true, 
+            message: "Problem created successfully",
+            problem: newProblem
+        });
     } catch (error) {
         console.log("Error while creating new problem: ", error);
         return res.status(500).json({
@@ -106,13 +105,13 @@ export const getAllProblems = async(req, res) => {
     }
 };
 
-export const getProblemByName = async(req, res) => {
-    const { name } = req.params;
+export const getProblemById = async(req, res) => {
+    const { id } = req.params;
 
     try {
         const problem = await db.problem.findUnique({
             where: {
-                name: name
+                id
             }
         });
 
@@ -137,13 +136,13 @@ export const getProblemByName = async(req, res) => {
 };
 
 export const updateProblem = async(req, res) => {
-    const { name } = req.params;
+    const { id } = req.params;
     const { newTitle, newDescription, newDifficulty, newTags, newExamples, newConstraints, newTestcases, newCodeSnippets, newReferenceSolutions } = req.body;
 
     try {
         const problem = await db.problem.findUnique({
             where: {
-                name: name
+                id
             }
         });
 
@@ -154,24 +153,22 @@ export const updateProblem = async(req, res) => {
         }
 
         const updateData = {
-            ...(!newTitle && {title: newTitle}),
-            ...(!newDescription && {description: newDescription}),
-            ...(!newDifficulty && {difficulty: newDifficulty}), 
-            ...(!newTags && {tags: newTags}),
-            ...(!newExamples && {examples: newExamples}),
-            ...(!newConstraints && {constraints: newConstraints}),
-            ...(!newTestcases && {testcases: newTestcases}),
-            ...(!newCodeSnippets && {codeSnippets: newCodeSnippets}),
-            ...(!newReferenceSolutions && {referenceSolutions: newReferenceSolutions})
+            ...(newTitle && {title: newTitle}),
+            ...(newDescription && {description: newDescription}),
+            ...(newDifficulty && {difficulty: newDifficulty}), 
+            ...(newTags && {tags: newTags}),
+            ...(newExamples && {examples: newExamples}),
+            ...(newConstraints && {constraints: newConstraints}),
+            ...(newTestcases && {testcases: newTestcases}),
+            ...(newCodeSnippets && {codeSnippets: newCodeSnippets}),
+            ...(newReferenceSolutions && {referenceSolutions: newReferenceSolutions})
         }
 
         const updatedProblem = await db.problem.update({
             where: {
-                name: name
+                id
             },
-            data: {
-                updateData
-            }
+            data: updateData
         });
 
         if(!updatedProblem) {
@@ -195,12 +192,12 @@ export const updateProblem = async(req, res) => {
 };
 
 export const deleteProblem = async(req, res) => {
-    const { name } = req.params;
+    const { id } = req.params;
 
     try {
         const problem = await db.problem.findUnique({
             where: {
-                name
+                id
             }
         }); 
 
@@ -212,7 +209,7 @@ export const deleteProblem = async(req, res) => {
 
         const deletedProblem = await db.problem.delete({
             where: {
-                name
+                id
             }
         });
 
