@@ -1,5 +1,5 @@
 import express from "express";
-import { login, logout, me, register } from "../controllers/auth.controllers.js";
+import { deleteAccount, login, logout, me, register } from "../controllers/auth.controllers.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 
 
@@ -13,6 +13,8 @@ authRoutes.post("/login", login);
 authRoutes.post("/logout", authMiddleware, logout);
 
 authRoutes.get("/me", authMiddleware, me);
+
+authRoutes.delete("/delete", authMiddleware, deleteAccount);
 
 
 export default authRoutes;
