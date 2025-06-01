@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import  { db } from "../libs/db.js";
-import { UserRole } from "../generated/prisma/index.js";
 
 export const authMiddleware = async(req, res, next) => {
     try {
@@ -30,6 +29,7 @@ export const authMiddleware = async(req, res, next) => {
                 id: true,
                 name: true, 
                 email: true,
+                username: true,
                 role: true
             }
         });
@@ -63,7 +63,7 @@ export const checkAdmin = async(req, res, next) => {
             }
         })
 
-        if(!user || user.role !== UserRole.ADMIN) {
+        if(!user || user.role !== "ADMIN") {
             return res.status(403).json({
                 message: "Access denied"
             })
