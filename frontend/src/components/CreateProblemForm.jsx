@@ -34,12 +34,32 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useTheme } from "next-themes"
 
-// ... (keep your existing schema and sample data)
-
 const CreateProblemForm = () => {
+
+
+  const navigate = useNavigate();
+  const onSubmit = async(data) => {
+    try {
+      setIsLoading(true);
+      const res = await axiosInstance.post("/problems/createProblem", data);
+      console.log("Problem creation request sent : ", res.data);
+      toast.success(res.data.message || "Problem created successfully");
+      navigate("/");
+    } catch (error) {
+      console.log("problem creation error: ", error);
+      toast.error("Error creating problem");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+
+
+
+
   const { theme } = useTheme();
   const [sampleType, setSampleType] = useState("DP")
-  const navigation = useNavigate();
   const problemSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
@@ -577,21 +597,6 @@ public class Main {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async (value) => {
-    try {
-      setIsLoading(true)
-      const res = await axiosInstance.post("/problems/create-problem", value)
-      console.log(res.data);
-      toast.success(res.data.message || "Problem Created successfully⚡");
-      navigation("/");
-    } catch (error) {
-      console.log(error);
-      toast.error("Error creating problem")
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   const loadSampleData = () => {
     const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem
     replaceTags(sampleData.tags.map((tag) => tag));
@@ -618,7 +623,7 @@ public class Main {
                   DP Problem
                 </Button>
                 <Button
-                  variant={sampleType === "string" ? "default" : "outline"}
+                  variant={sampleType === "string" ? "default" : "secondary"}
                   onClick={() => setSampleType("string")}
                   size="sm"
                 >
@@ -626,7 +631,7 @@ public class Main {
                 </Button>
               </div>
               <Button
-                variant="secondary"
+                variant="ghost"
                 size="sm"
                 onClick={loadSampleData}
                 className="gap-2"
@@ -646,6 +651,7 @@ public class Main {
                 <Label htmlFor="title">Title</Label>
                 <Input
                   id="title"
+                  name="title"
                   {...register("title")}
                   placeholder="Enter problem title"
                 />
@@ -744,28 +750,28 @@ public class Main {
 
             {/* Test Cases */}
             <Card>
-              <CardHeader className="p-4 md:p-6">
+              <CardHeader className="px-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-5 h-5" />
-                    <CardTitle className="text-lg">Test Cases</CardTitle>
+                    <CardTitle className="text-lg">Testcases</CardTitle>
                   </div>
                   <Button
                     type="button"
                     size="sm"
                     onClick={() => appendTestCase({ input: "", output: "" })}
                   >
-                    <Plus className="w-4 h-4 mr-1" /> Add Test Case
+                    <Plus className="w-4 h-4 mr-1" /> Add Testcase
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 md:p-6 pt-0 space-y-6">
+              <CardContent className="px-4 space-y-6">
                 {testCaseFields.map((field, index) => (
                   <Card key={field.id}>
-                    <CardHeader className="p-4">
+                    <CardHeader className="px-4">
                       <div className="flex justify-between items-center">
                         <CardTitle className="text-base">
-                          Test Case #{index + 1}
+                          Testcase {index + 1}
                         </CardTitle>
                         <Button
                           type="button"
@@ -779,7 +785,7 @@ public class Main {
                         </Button>
                       </div>
                     </CardHeader>
-                    <CardContent className="p-4 pt-0">
+                    <CardContent className="px-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="space-y-2">
                           <Label>Input</Label>
@@ -830,13 +836,13 @@ public class Main {
               {["JAVASCRIPT", "PYTHON", "JAVA"].map((language) => (
                 <TabsContent key={language} value={language} className="space-y-6">
                   <Card>
-                    <CardHeader className="p-4 md:p-6">
+                    <CardHeader className="px-4">
                       <div className="flex items-center gap-2">
                         <Code2 className="w-5 h-5" />
                         <CardTitle className="text-lg">{language}</CardTitle>
                       </div>
                     </CardHeader>
-                    <CardContent className="p-4 md:p-6 pt-0 space-y-6">
+                    <CardContent className="px-4 space-y-6">
                       {/* Starter Code */}
                       <div className="space-y-2">
                         <Label>Starter Code Template</Label>
@@ -884,7 +890,7 @@ public class Main {
                               <Editor
                                 height="300px"
                                 language={language.toLowerCase()}
-                                theme={theme === "dark" ? "vs-dark" : "light"}
+                                theme="vs-dark"
                                 value={field.value}
                                 onChange={field.onChange}
                                 options={{
@@ -960,7 +966,7 @@ public class Main {
                   <CardTitle className="text-lg">Additional Information</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 md:p-6 pt-0 space-y-6">
+              <CardContent className="px-4 pt-0 space-y-6">
                 <div className="space-y-2">
                   <Label>Constraints</Label>
                   <Textarea
