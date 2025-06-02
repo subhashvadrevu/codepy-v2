@@ -42,11 +42,12 @@ export const createProblem = async(req, res) => {
             
             for(let i = 0; i < batchSubmissionResult.length; i++) {
                 const result = batchSubmissionResult[i];
-                console.log(`Result ${i} : `, result);
+                console.log(`Result ${i+1} : `, result);
 
-                if(result.status_id !== 3) {
+                if(result.status.id !== 3) {
+                    console.log('test case poyindi bro');
                     return res.status(400).json({
-                        error: `Testcase ${i} - ${result.status_id} for language: ${language}, stderr: ${result.stderr}`
+                        error: `Testcase ${i+1} - ${result.status_id} for language: ${language}, stderr: ${result.stderr}`
                     });
                 }
             }
