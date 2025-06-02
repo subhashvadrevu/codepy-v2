@@ -72,4 +72,4 @@
 - ### Frontend
     - npx react-ignite@latest
         - select react-tailwind-shadcn template
-    - npm i react-router-dom
+    - npm i react-router-dom  
