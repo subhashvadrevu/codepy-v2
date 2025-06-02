@@ -68,3 +68,8 @@
     - npm i cookie-parser
 
     - in git bash : openssl rand -hex 32 (for jwt secret)
+
+- ### Frontend
+    - npx react-ignite@latest
+        - select react-tailwind-shadcn template
+    - npm i react-router-dom
