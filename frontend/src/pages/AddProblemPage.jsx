@@ -1,9 +1,8 @@
+import CreateProblemForm from '@/components/CreateProblemForm.jsx'
 import React from 'react'
 
 const AddProblemPage = () => {
-  return (
-    <div>AddProblemPage</div>
-  )
+  return <CreateProblemForm />
 }
 
 export default AddProblemPage

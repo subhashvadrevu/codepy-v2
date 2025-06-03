@@ -6,19 +6,15 @@ import { Navigate, Outlet } from 'react-router-dom';
 const AdminPanelPage = () => {
     
     const { authenticatedUser, isCheckingAuth } = useAuthStore();
-  
+
     if(isCheckingAuth) {
         return <div className='flex items-center justify-center h-screen'>
             <Loader className='size-10 animate-spin' />
         </div>
     }
 
-    if(!authenticatedUser) {
-        return <Navigate to={"/login"} />
-    }
-
-    if(authenticatedUser.role !== "ADMIN") {
-        return <Navigate to={"/"} />
+    if(sessionStorage.getItem("role") !== "ADMIN") {
+        return <Navigate to="/" />
     }
 
     return <Outlet />
