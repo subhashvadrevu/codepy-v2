@@ -47,7 +47,7 @@ export const createProblem = async(req, res) => {
                 if(result.status.id !== 3) {
                     console.log('test case poyindi bro');
                     return res.status(400).json({
-                        error: `Testcase ${i+1} - ${result.status_id} for language: ${language}, stderr: ${result.stderr}`
+                        error: `Testcase ${i+1} - ${result.status.id} for language: ${language}, stderr: ${result.stderr}`
                     });
                 }
             }
