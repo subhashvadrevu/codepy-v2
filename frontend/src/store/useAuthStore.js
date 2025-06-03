@@ -16,6 +16,7 @@ export const useAuthStore = create((set) => ({
         try {
             const res = await axiosInstance.get("/auth/me");
             console.log("check auth res : ", res.data);
+            sessionStorage.setItem("role", res.data.user.role);
             set({ authenticatedUser: res.data.user });
         } catch (error) {
             console.log("error checking auth: ",error);
@@ -47,6 +48,7 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.post("/auth/login", data);
 
             set({ authenticatedUser: res.data.user });
+            sessionStorage.setItem("role", res.data.user.role);
 
             toast.success(res.data.message);
         } catch (error) {
@@ -61,7 +63,7 @@ export const useAuthStore = create((set) => ({
         try {
             await axiosInstance.post("/auth/logout");
             set({ authenticatedUser: null });
-
+            sessionStorage.removeItem("role");
             toast.success("Logout successful");
         } catch (error) {
             console.log("Error logging out: ", error);
@@ -74,7 +76,7 @@ export const useAuthStore = create((set) => ({
         try {
             await axiosInstance.delete("/auth/delete");
             set({ authenticatedUser: null });
-
+            sessionStorage.removeItem("role");  
             toast.success("Account deleted successfully");
         } catch (error) {
             console.log("Error deleting account: ", error);
