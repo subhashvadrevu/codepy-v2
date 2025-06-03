@@ -1,30 +1,34 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Flame, Menu, X } from "lucide-react";
+import { BadgeIndianRupee, Menu, MoonStarIcon, Sun, X } from "lucide-react";
 import { Button } from "./ui/button.jsx";
 import { cn } from "../lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Separator } from "./ui/separator.jsx";
+import { useThemeStore } from "@/store/useThemeStore.js";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const navItems = [
   { name: "Problems", href: "/problems" },
-  ];
+];
 
 const Navbar = () => {
+  const { theme, toggleTheme } = useThemeStore();
   const [mobileOpen, setMobileOpen] = useState(false);
   const { authenticatedUser, logout } = useAuthStore();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const location = useLocation();
 
-  
   useEffect(() => {
     setMobileOpen(false);
     setShowDropdown(false);
   }, [location.pathname]);
 
-
-  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -36,22 +40,22 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background border-b border-border px-6">
-      <div className="container flex h-16 items-center justify-between">
-        
-        <Link to="/" className="flex items-center gap-0.5 cursor-pointer">
-          <Flame fill="#ff9100" color="#ff9100" size={24} />
-          <span className="font-semibold text-2xl dark:text-white">CodePy</span>
+    <header className="dark:bg-[#18181b] sticky top-0 z-50 w-full bg-background border-b-2 border-border px-4 sm:px-6 md:px-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 h-16 w-full max-w-screen-2xl mx-auto">
+
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+          <img src="/logo.png" alt="Logo" className="max-h-10 max-w-10" />
+          <div className="text-lg font-normal dark:text-white">CodePy</div>
         </Link>
 
-        
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-3 flex-grow justify-center">
           {navItems.map(({ name, href }) => (
             <Link
               key={name}
               to={href}
               className={cn(
-                "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                "px-3 py-2 rounded-md text-md transition-colors",
                 "hover:bg-accent hover:text-accent-foreground",
                 location.pathname === href
                   ? "bg-accent text-accent-foreground"
@@ -63,60 +67,75 @@ const Navbar = () => {
           ))}
         </nav>
 
-        
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden md:flex items-center justify-end gap-3 flex-shrink-0">
+          {theme === "light" ? (
+            <MoonStarIcon
+              className="h-5 w-5 cursor-pointer"
+              onClick={toggleTheme}
+            />
+          ) : (
+            <Sun
+              className="h-5 w-5 cursor-pointer"
+              onClick={toggleTheme}
+            />
+          )}
+
           {authenticatedUser ? (
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setShowDropdown((prev) => !prev)}
-                className="focus:outline-none"
-              >
-                <img
-                  src={authenticatedUser.avatar || "https://avatar.iran.liara.run/public/boy"}
-                  alt="Profile"
-                  className="w-12 h-12 rounded-full object-cover border border-border cursor-pointer"
-                />
-              </button>
+            <div className="flex items-center gap-4">
+              <Tooltip>
+                <TooltipTrigger>
+                  <BadgeIndianRupee className="fill-yellow-500 stroke-yellow-500" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Earn Pycoins to unlock editorials</p>
+                </TooltipContent>
+              </Tooltip>
 
-              {showDropdown && (
-                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-900 border border-border rounded-md shadow-lg z-50 animate-in fade-in-50 slide-in-from-top-2 p-2 space-y-1">
-                  <Link
-                    to={`/user/${authenticatedUser.username}`}
-                    className="block p-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground rounded-sm text-center"
-                    onClick={() => setShowDropdown(false)}
-                  >
-                    {authenticatedUser.name || "Profile"} 
-                  </Link>
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setShowDropdown((prev) => !prev)}
+                  className="focus:outline-none"
+                >
+                  <img
+                    src={authenticatedUser.avatar || "https://avatar.iran.liara.run/public/boy"}
+                    alt="Profile"
+                    className="w-10 h-10 rounded-full border border-border object-cover"
+                  />
+                </button>
 
-                  <Separator />
-
-                  {authenticatedUser.role === "ADMIN" 
-                    ?
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-900 border border-border rounded-md shadow-lg z-50 p-2 space-y-1">
                     <Link
-                      to="/admin"
-                      className="block p-2 text-sm text-foreground hover:bg-accent hover:text-accent-foreground rounded-sm text-center"
-                      onClick={() => setShowDropdown(false)}
+                      to={`/user/${authenticatedUser.username}`}
+                      className="block p-2 text-sm text-center hover:bg-accent hover:text-accent-foreground rounded"
                     >
-                      Admin Access
+                      {authenticatedUser.name || "Profile"}
                     </Link>
-                    :
-                    <></>
-                  }
-
-                  <Separator />
-
-                  <Button  
-                    variant={"destructive"}
-                    onClick={() => {
-                      logout();
-                      setShowDropdown(false);
-                    }}
-                    className="w-full px-4 py-2 text-sm cursor-pointer"
-                  >
-                    Sign out
-                  </Button>
-                </div>
-              )}
+                    <Separator />
+                    {authenticatedUser.role === "ADMIN" && (
+                      <>
+                        <Link
+                          to="/admin"
+                          className="block p-2 text-sm text-center hover:bg-accent hover:text-accent-foreground rounded"
+                        >
+                          Admin Access
+                        </Link>
+                        <Separator />
+                      </>
+                    )}
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        logout();
+                        setShowDropdown(false);
+                      }}
+                      className="w-full text-sm"
+                    >
+                      Sign out
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <>
@@ -130,112 +149,74 @@ const Navbar = () => {
           )}
         </div>
 
-        
+        {/* Mobile Toggle Button */}
         <Button
           variant="secondary"
           size="icon"
-          className="md:hidden"
+          className="md:hidden ml-auto"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-          aria-expanded={mobileOpen}
-          aria-controls="mobile-menu"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          <span className="sr-only">Toggle menu</span>
         </Button>
       </div>
 
-      
+      {/* Mobile Menu */}
       {mobileOpen && (
-        <div
-          id="mobile-menu"
-          className="md:hidden animate-in fade-in-50 slide-in-from-top-2"
-        >
-          <div className="px-4 pt-2 pb-4 space-y-1">
-            {navItems.map(({ name, href }) => (
-              <Link
-                key={name}
-                to={href}
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  "block px-4 py-2 rounded-md text-sm font-medium transition-colors",
-                  "hover:bg-accent hover:text-accent-foreground text-center",
-                  location.pathname === href
-                    ? "bg-accent text-accent-foreground"
-                    : "text-foreground/80"
-                )}
-              >
-                {name}
-              </Link>
-            ))}
+        <div className="md:hidden mt-2 animate-in fade-in slide-in-from-top bg-background border-t border-border px-4 py-3">
+          {navItems.map(({ name, href }) => (
+            <Link
+              key={name}
+              to={href}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "block px-4 py-2 rounded-md text-sm text-center font-medium transition-colors",
+                "hover:bg-accent hover:text-accent-foreground",
+                location.pathname === href
+                  ? "bg-accent text-accent-foreground"
+                  : "text-foreground/80"
+              )}
+            >
+              {name}
+            </Link>
+          ))}
 
-            <div className="pt-4 space-y-2 border-t border-border">
-              {authenticatedUser ? (
-                <div>
-                  <Link to={`/user/${authenticatedUser.username}`} onClick={() => setMobileOpen(false)}>
-                    <div className={cn(
-                      "block px-4 py-2 rounded-md text-sm font-medium transition-colors",
-                      "hover:bg-accent hover:text-accent-foreground mb-2 text-center",
-                      location.pathname === `/user/${authenticatedUser.username}`
-                        ? "bg-accent text-accent-foreground"
-                        : "text-foreground/80"
-                    )}>
-                      {authenticatedUser.name || "Profile"}
+          <div className="mt-4 border-t border-border pt-3 space-y-2">
+            {authenticatedUser ? (
+              <>
+                <Link to={`/user/${authenticatedUser.username}`} onClick={() => setMobileOpen(false)}>
+                  <div className="block px-4 py-2 rounded-md text-sm text-center font-medium hover:bg-accent hover:text-accent-foreground">
+                    {authenticatedUser.name || "Profile"}
+                  </div>
+                </Link>
+                {authenticatedUser.role === "ADMIN" && (
+                  <Link to="/admin" onClick={() => setMobileOpen(false)}>
+                    <div className="block px-4 py-2 rounded-md text-sm text-center font-medium hover:bg-accent hover:text-accent-foreground">
+                      Admin Access
                     </div>
                   </Link>
-
-                  
-
-                  {authenticatedUser.role === "ADMIN" 
-                    ?
-                      <Link to="/admin" onClick={() => setMobileOpen(false)}>
-                        <div className={cn(
-                          "block px-4 py-2 rounded-md text-sm font-medium transition-colors",
-                          "hover:bg-accent hover:text-accent-foreground mb-2 text-center",
-                          location.pathname === "/admin"
-                            ? "bg-accent text-accent-foreground"
-                            : "text-foreground/80"
-                        )}>
-                          Admin Access
-                        </div>
-                      </Link>
-                    :
-                      <></>
-                  }
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    className="w-full"
-                    onClick={() => {
-                      logout();
-                      setMobileOpen(false);
-                    }}
-                  >
-                    Sign out
-                  </Button>
-                </div>
-              ) : (
-                <>
-                  <Button
-                    size="sm"
-                    className="w-full"
-                    asChild
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <Link to="/signup">Sign up</Link>
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full"
-                    asChild
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <Link to="/login">Login</Link>
-                  </Button>
-                </>
-              )}
-            </div>
+                )}
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="w-full mt-2"
+                  onClick={() => {
+                    logout();
+                    setMobileOpen(false);
+                  }}
+                >
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button size="sm" className="w-full" asChild onClick={() => setMobileOpen(false)}>
+                  <Link to="/signup">Sign up</Link>
+                </Button>
+                <Button variant="secondary" size="sm" className="w-full" asChild onClick={() => setMobileOpen(false)}>
+                  <Link to="/login">Login</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
