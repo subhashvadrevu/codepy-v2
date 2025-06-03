@@ -12,19 +12,24 @@ import AdminPanelPage from './pages/AdminPanelPage.jsx';
 import AddProblemPage from './pages/AddProblemPage.jsx';
 import AdminPage from './pages/AdminPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import { useThemeStore } from './store/useThemeStore.js';
 
 const App = () => {
 
-
+  const { theme, toggleTheme } = useThemeStore();
   const { authenticatedUser, checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth])
+  }, [checkAuth]);
+
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   if(isCheckingAuth && !authenticatedUser) {
     return (
-      <div className='flex items-center justify-center h-screen'>
+      <div className='flex items-center justify-center h-screen w-full'>
         <Loader className='size-10 animate-spin' />
       </div>
     )
@@ -32,11 +37,12 @@ const App = () => {
 
   return (
     <>
-      <div className='flex flex-col items-center justify-start w-full'>
+      <div className={`dark:bg-[#18181b] ${theme} flex flex-col items-center justify-start w-full h-screen`}>
         <Toaster />
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route index element={authenticatedUser ? <HomePage />: <Navigate to={"/login"} />} />
+            <Route path='/problems' element={authenticatedUser ? <HomePage />: <Navigate to={"/login"} />} />
             <Route path='/login' element={!authenticatedUser ? <LoginPage /> : <Navigate to={"/"} /> } />
             <Route path='/signup' element={!authenticatedUser ? <SignupPage /> : <Navigate to={"/"} /> } /> 
             <Route path='/user/:username' element={<ProfilePage />} />
