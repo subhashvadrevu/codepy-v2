@@ -32,14 +32,44 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useTheme } from "next-themes"
+
+import {problemSchema} from "../utilities/zodSchema.js";
+import { useThemeStore } from '@/store/useThemeStore.js';
+import SelectMulti from "react-select";
 
 const CreateProblemForm = () => {
+
+      const { theme } = useThemeStore();
+  
+      const tagOptions = [
+      { value: "arrays", label: "Arrays" },
+      { value: "string", label: "String" },
+      { value: "hashmap", label: "Hashmap" },
+      { value: "dynamic programming", label: "Dynamic Programming" },
+      { value: "tree", label: "Tree" },
+      { value: "graph", label: "Graph" },
+      { value: "backtracking", label: "Backtracking" },
+      { value: "bit manipulation", label: "Bit Manipulation" },
+      { value: "two pointers", label: "Two Pointers" },
+      { value: "searching", label: "Searching" },
+      { value: "sorting", label: "Sorting" },
+      { value: "greedy", label: "Greedy" },
+      { value: "binary search", label: "Binary Search" },
+      { value: "sliding window", label: "Sliding Window" },
+      { value: "trie", label: "Trie" },
+      { value: "stack", label: "Stack" },
+      { value: "queue", label: "Queue" },
+      { value: "heap", label: "Heap" },
+      { value: "math", label: "Math"},
+   ]
+  
+      const [tags, setTags] = useState([]);
 
 
   const navigate = useNavigate();
   const onSubmit = async(data) => {
     try {
+      console.log("idi data ra babu : ",data);
       setIsLoading(true);
       const res = await axiosInstance.post("/problems/createProblem", data);
       console.log("Problem creation request sent : ", res.data);
@@ -54,63 +84,15 @@ const CreateProblemForm = () => {
   };
 
 
-
-
-
-
-  const { theme } = useTheme();
   const [sampleType, setSampleType] = useState("DP")
-  const problemSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
-  tags: z.array(z.string()).min(1, "At least one tag is required"),
-  constraints: z.string().min(1, "Constraints are required"),
-  hints: z.string().optional(),
-  editorial: z.string().optional(),
-  testcases: z
-    .array(
-      z.object({
-        input: z.string().min(1, "Input is required"),
-        output: z.string().min(1, "Output is required"),
-      })
-    )
-    .min(1, "At least one test case is required"),
-  examples: z.object({
-    JAVASCRIPT: z.object({
-      input: z.string().min(1, "Input is required"),
-      output: z.string().min(1, "Output is required"),
-      explanation: z.string().optional(),
-    }),
-    PYTHON: z.object({
-      input: z.string().min(1, "Input is required"),
-      output: z.string().min(1, "Output is required"),
-      explanation: z.string().optional(),
-    }),
-    JAVA: z.object({
-      input: z.string().min(1, "Input is required"),
-      output: z.string().min(1, "Output is required"),
-      explanation: z.string().optional(),
-    }),
-  }),
-  codeSnippets: z.object({
-    JAVASCRIPT: z.string().min(1, "JavaScript code snippet is required"),
-    PYTHON: z.string().min(1, "Python code snippet is required"),
-    JAVA: z.string().min(1, "Java solution is required"),
-  }),
-  referenceSolutions: z.object({
-    JAVASCRIPT: z.string().min(1, "JavaScript solution is required"),
-    PYTHON: z.string().min(1, "Python solution is required"),
-    JAVA: z.string().min(1, "Java solution is required"),
-  }),
-});
+
 const sampledpData = {
   title: "Climbing Stairs",
   category: "dp", // Dynamic Programming
   description:
     "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
   difficulty: "EASY",
-  tags: ["Dynamic Programming", "Math", "Memoization"],
+  tags: ["dynamic programming"],
   constraints: "1 <= n <= 45",
   hints:
     "To reach the nth step, you can either come from the (n-1)th step or the (n-2)th step.",
@@ -356,7 +338,7 @@ const sampleStringProblem = {
   description:
     "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers. Given a string s, return true if it is a palindrome, or false otherwise.",
   difficulty: "EASY",
-  tags: ["String", "Two Pointers"],
+  tags: ["string", "two pointers"],
   constraints:
     "1 <= s.length <= 2 * 10^5\ns consists only of printable ASCII characters.",
   hints:
@@ -555,7 +537,7 @@ public class Main {
       resolver: zodResolver(problemSchema),
       defaultValues: {
         testcases: [{ input: "", output: "" }],
-        tags: [""],
+        tags: [],
         examples: {
           JAVASCRIPT: { input: "", output: "", explanation: "" },
           PYTHON: { input: "", output: "", explanation: "" },
@@ -585,23 +567,26 @@ public class Main {
     name: "testcases",
   });
 
-  const {
-    fields: tagFields,
-    append: appendTag,
-    remove: removeTag,
-    replace: replaceTags,
-  } = useFieldArray({
-    control,
-    name: "tags",
-  });
+  // const {
+  //   fields: tagFields,
+  //   append: appendTag,
+  //   remove: removeTag,
+  //   replace: replaceTags,
+  // } = useFieldArray({
+  //   control,
+  //   name: "tags",
+  // });
 
   const [isLoading, setIsLoading] = useState(false);
 
   const loadSampleData = () => {
     const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem
-    replaceTags(sampleData.tags.map((tag) => tag));
+    setTags(sampleData.tags);
     replacetestcases(sampleData.testcases.map((tc) => tc));
-    reset(sampleData);
+    reset({
+      ...sampleData,
+      tags: sampleData.tags
+    });
   }
 
   return (
@@ -701,26 +686,102 @@ public class Main {
                   </p>
                 )}
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="difficulty">Tags</Label>
+                <SelectMulti
+                            styles={{
+                                control: (base, state) => ({
+                                    ...base,
+                                    backgroundColor: theme === 'light' ? '#f5f4f4' : '#27272a',
+                                    color: theme === 'light' ? 'black' : '#fff',
+                                    boxShadow: state.isFocused ? "0 0 0 1px #ff6900" : "none",
+                                    border: "none"
+                                }),
+                                menu: (base) => ({
+                                    ...base,
+                                    backgroundColor: theme === 'light' ? '#f5f4f4' : '#27272a',
+                                    color: theme === 'light' ? 'black' : '#fff',
+                                }),
+                                option: (base, state) => ({
+                                    ...base,
+                                    backgroundColor: state.isFocused
+                                    ? theme === 'light'
+                                        ? '#ff6900'
+                                        : '#ff6900'
+                                    : theme === 'light'
+                                    ? '#f5f4f4'
+                                    : '#27272a',
+                                    color: state.isFocused
+                                    ? theme === 'light'
+                                        ? '#fff'
+                                        : '#fff'
+                                    : theme === 'light'
+                                    ? 'black'
+                                    : 'white',
+                                    cursor: 'pointer',
+                                }),
+                                multiValue: (base) => ({
+                                    ...base,
+                                    backgroundColor: theme === 'light' ? '#e4e4e7' : '#3f3f46',
+                                    color: theme === 'light' ? 'black' : '#fff',
+                                }),
+                                multiValueLabel: (base) => ({
+                                    ...base,
+                                    color: theme === 'light' ? 'black' : '#fff',
+                                }),
+                                multiValueRemove: (base) => ({
+                                    ...base,
+                                    color: theme === 'light' ? '#333' : '#fff',
+                                    ':hover': {
+                                    backgroundColor: theme === 'light' ? '#d4d4d8' : '#52525b',
+                                    color: theme === 'light' ? 'black' : '#fff',
+                                    },
+                                }),
+                                placeholder: (base) => ({
+                                    ...base,
+                                    color: theme === 'light' ? '#737373' : '#a1a1aa',
+                                }),
+                                singleValue: (base) => ({
+                                    ...base,
+                                    color: theme === 'light' ? 'black' : '#fff',
+                                }), 
+                            }}
+                            className='w-full rounded-lg'
+                            isMulti={true}
+                            options={tagOptions}
+                            placeholder={"Tags"}
+                            value={tagOptions.filter((tag) => tags.includes(tag.value))}
+                            onChange={(selectedOptions) => setTags(selectedOptions.map((option) => option.value))}
+                        />
+                {errors.tags && (
+                  <p className="text-sm font-medium text-destructive">
+                    {errors.tags.message}
+                  </p>
+                )}
+              </div>
             </div>
 
+
+
             {/* Tags */}
-            <Card>
-              <CardHeader className="px-4">
-                <div className="flex items-center justify-between">
+            {/* <Card> */}
+              {/* <CardHeader className="px-4">
+                {/* <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
                     <CardTitle>Tags</CardTitle>
-                  </div>
-                  <Button
+                  </div> */}
+                  {/* <Button
                     type="button"
                     size="sm"
                     onClick={() => appendTag("")}
                   >
                     <Plus className="w-4 h-4 mr-1" /> Add Tag
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="px-4">
+                  </Button> */}
+                {/* </div> */}
+              {/* </CardHeader> */}
+              {/* <CardContent className="px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {tagFields.map((field, index) => (
                     <div key={field.id} className="flex gap-2 items-center">
@@ -746,7 +807,7 @@ public class Main {
                   </p>
                 )}
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Test Cases */}
             <Card>
