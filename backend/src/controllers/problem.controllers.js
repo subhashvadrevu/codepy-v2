@@ -11,6 +11,20 @@ export const createProblem = async(req, res) => {
     }
 
     try {
+
+        const existingProblem = await db.problem.findUnique({
+            where: {
+                title
+            }
+        });
+
+        if(existingProblem) {
+            return res.status(400).json({
+                error: "Problem with same title already exists"
+            });
+        }
+
+
         for(const [language, solution] of Object.entries(referenceSolutions)) {
             const languageId = getJudge0Id(language);
 

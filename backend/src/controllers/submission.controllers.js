@@ -27,7 +27,7 @@ export const submitCode = async(req, res) => {
 
         const submissionResponse = await createBatchSubmission(submissions);
 
-        const tokensArray = submissionResponse.map((res) => res.token);
+        const tokensArray = submissionResponse?.map((res) => res.token);
 
         const results = await getBatchSubmissionResult(tokensArray);
 
