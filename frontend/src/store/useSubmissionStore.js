@@ -11,6 +11,7 @@ export const useSubmissionStore = create((set) => ({
     allSubmissions: null,
     isFetchingCount: false,
     submissionsCount: null,
+    runSubmission: null,
 
     submitCode: async(source_code, language_id, stdin, expected_output, problemId) => {
         try {
@@ -35,8 +36,8 @@ export const useSubmissionStore = create((set) => ({
 
             const res = await axiosInstance.post("/submit/run", { source_code, language_id, stdin, expected_output, problemId });
 
-            set({ submission: res.data.submissionWithTestCases });
-            console.log(res.data);
+            set({ runSubmission: res.data.submissionWithTestCases });
+            console.log("salaaaaar : ",res.data.submissionWithTestCases);
             toast.success(res.data.message);
         } catch (error) {
             console.log(error);

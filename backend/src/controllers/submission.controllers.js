@@ -235,7 +235,7 @@ export const runCode = async(req, res) => {
         return res.status(200).json({
             success: true,
             message: "Code executed sucessfully",
-            submissionWithTestCases: testcaseResults
+            testcaseResults
         });
 
     } catch (error) {

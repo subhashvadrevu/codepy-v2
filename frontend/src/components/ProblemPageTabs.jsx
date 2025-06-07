@@ -31,7 +31,7 @@ import { Button } from "./ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
 
 
-export function TabsDemo({ activeTab, setActiveTab, problem, submission, expOut, submissions, isLoadingSubmissions, isRunCode}) {
+export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubmission, expOut, submissions, isLoadingSubmissions, isRunCode}) {
   const [solutionLang, setSolutionLang] = useState("PYTHON");
 
   const { theme } = useThemeStore();
@@ -249,35 +249,29 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, expOut,
         <TabsContent value="result">
   <Card className="h-full p-4">
     {isRunCode ? (
-      !submission ? (
+      !runSubmission ? (
         <ScrollArea className="h-full pr-2">
           <h2 className="text-xl font-semibold mb-2">Result</h2>
           <p className="text-md whitespace-pre-wrap text-muted-foreground">
             You must Run or Submit your code first.
           </p>
         </ScrollArea>
-      ) : submission.testcaseResult && submission.testcaseResult.length > 0 ? (
+      ) : runSubmission && runSubmission.length > 0 ? (
         // Show detailed test case results with tabs
         <ScrollArea className="h-full pr-2">
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Execution Result</h2>
-              <div className="flex gap-2">
-                <Badge variant="secondary"><Clock /> {submission.time}</Badge>
-                <Badge variant="secondary"><MemoryStick /> {submission.memory}</Badge>
-              </div>
-            </div>
+            <h2 className="text-lg font-semibold">Execution Result</h2>
 
             <Tabs defaultValue={0} className="space-y-2">
               <TabsList className="w-full flex-wrap">
-                {submission.testcaseResult.map((tc, index) => (
+                {runSubmission.map((tc, index) => (
                   <TabsTrigger key={index} value={index} className="text-sm">
                     Test Case {index + 1}
                   </TabsTrigger>
                 ))}
               </TabsList>
 
-              {submission.testcaseResult.map((tc, index) => (
+              {runSubmission.map((tc, index) => (
                 <TabsContent value={index} key={index}>
                   <div className="bg-[#ececec] dark:bg-[#27272a] p-4 rounded-lg space-y-4 text-md">
                     <p

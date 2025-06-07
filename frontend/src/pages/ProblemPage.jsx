@@ -36,7 +36,7 @@ const ProblemPage = () => {
   }, [problem, selectedLang]);
 
 
-  const { submitCode, runCode, isExecuting, submission, isLoadingSubmissions, submissionsById, getSubmissionsById } = useSubmissionStore();
+  const { submitCode, runCode, isExecuting, submission, runSubmission, isLoadingSubmissions, submissionsById, getSubmissionsById } = useSubmissionStore();
 
   const [isRunCode, setIsRunCode] = useState(true);
 
@@ -91,6 +91,7 @@ const ProblemPage = () => {
           bookmarked={bookmarked}
           setBookmarked={setBookmarked}
           submission={submission}
+          runSubmission={runSubmission}
           expOut={expOut}
           submissions={submissionsById}
           isLoadingSubmissions={isLoadingSubmissions}
