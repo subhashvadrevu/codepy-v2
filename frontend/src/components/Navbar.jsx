@@ -45,7 +45,7 @@ const Navbar = () => {
 
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <img src="../assets/logo.png" alt="Logo" className="max-h-10 max-w-10" />
+          <img src="./src/assets/logo.png" alt="Logo" className="max-h-10 max-w-10" />
           <div className="text-lg font-normal dark:text-white">CodePy</div>
         </Link>
 
