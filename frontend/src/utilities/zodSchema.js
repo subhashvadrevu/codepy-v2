@@ -58,6 +58,6 @@ export const problemSchema = z.object({
 });
 
 
-export const updateProblemSchema = z.object({
-    
+export const deleteProblemSchema = z.object({
+  problemId: z.string().min(1, "Problem ID is required"),
 });

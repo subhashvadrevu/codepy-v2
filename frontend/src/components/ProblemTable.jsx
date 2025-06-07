@@ -51,7 +51,7 @@ const ProblemTable = (props) => {
                                     pageNo*probCount + index +1
                                 }
                             </td>
-                            <td className={`col-span-8 text-center p-3 hover:cursor-pointer bg-white dark:bg-[#27272a]" }`} onClick={() => navigate(`/problem/${problem.id}`)}>{problem.title}</td>
+                            <td className="col-span-8 text-center p-3 hover:cursor-pointer bg-white dark:bg-[#27272a]" onClick={() => navigate(`/problem/${problem.id}`)}>{problem.title}</td>
                             <td className={`col-span-2 text-center p-3 bg-white dark:bg-[#27272a] font-semibold dark:font-normal font-mono ${problem.difficulty === "EASY" && "text-[#2cbb52]"} ${problem.difficulty === "MEDIUM" && "text-[#fcb700]"} ${problem.difficulty === "HARD" && "text-[#ff6467]"}`}>{problem.difficulty.slice(0,1) + problem.difficulty.toLowerCase().slice(1)}</td>
                         </tr>
                     ))

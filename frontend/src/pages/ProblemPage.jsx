@@ -94,7 +94,7 @@ const ProblemPage = () => {
           expOut={expOut}
           submissions={submissionsById}
           isLoadingSubmissions={isLoadingSubmissions}
-          setIsRunCode={setIsRunCode}
+          isRunCode={isRunCode}
         />
       </div>
 

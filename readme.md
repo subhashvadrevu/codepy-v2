@@ -83,6 +83,8 @@
 
 Remaining work : 
 
-- admin pages
-- submission pages
-- 30 problems
+- update and delete problem - 05/06
+- problem page + editor + submission - 05/06
+- playlist - 06/06
+- 30 problems 06/06
+- submit project => 07/06

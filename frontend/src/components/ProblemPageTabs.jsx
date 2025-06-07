@@ -247,148 +247,147 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, expOut,
         
         
         <TabsContent value="result">
-            <Card className="h-full p-4">
-                {
-                    isRunCode 
-                    ?
-                        (!submission 
-                        ? 
-                            (
-                                <ScrollArea className="h-full pr-2">
-                                    <h2 className="text-xl font-semibold mb-2">Result</h2>
-                                    <p className="text-md whitespace-pre-wrap text-muted-foreground">
-                                        You must Run or Submit your code first.
-                                    </p>
-                                </ScrollArea>
-                            ) 
-                            : 
-                            (
-                                <ScrollArea className="h-full pr-2">
-                                    <div className="space-y-4">
-                
-                                        <div className="flex items-center justify-between">
-                                            <h2 className="text-lg font-semibold">Execution Result</h2>
-                                            <div className="flex gap-2">
-                                                <Badge variant="secondary"><Clock /> {submission.time}</Badge>
-                                                <Badge variant="secondary"><MemoryStick /> {submission.memory}</Badge>
-                                            </div>
-                                        </div>
+  <Card className="h-full p-4">
+    {isRunCode ? (
+      !submission ? (
+        <ScrollArea className="h-full pr-2">
+          <h2 className="text-xl font-semibold mb-2">Result</h2>
+          <p className="text-md whitespace-pre-wrap text-muted-foreground">
+            You must Run or Submit your code first.
+          </p>
+        </ScrollArea>
+      ) : submission.testcaseResult && submission.testcaseResult.length > 0 ? (
+        // Show detailed test case results with tabs
+        <ScrollArea className="h-full pr-2">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Execution Result</h2>
+              <div className="flex gap-2">
+                <Badge variant="secondary"><Clock /> {submission.time}</Badge>
+                <Badge variant="secondary"><MemoryStick /> {submission.memory}</Badge>
+              </div>
+            </div>
 
-                                        {submission.testcaseResult?.length > 0 ? (
-                                            <Tabs defaultValue={0} className="space-y-2">
-                                                <TabsList className="w-full flex-wrap">
-                                                    {submission.testcaseResult.map((tc, index) => (
-                                                    <TabsTrigger key={index} value={index} className="text-sm">
-                                                        Test Case {index + 1}
-                                                    </TabsTrigger>
-                                                    ))}
-                                                </TabsList>
+            <Tabs defaultValue={0} className="space-y-2">
+              <TabsList className="w-full flex-wrap">
+                {submission.testcaseResult.map((tc, index) => (
+                  <TabsTrigger key={index} value={index} className="text-sm">
+                    Test Case {index + 1}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-                                                {submission.testcaseResult.map((tc, index) => (
-                                                    <TabsContent value={index} key={index}>
-                                                        <div className="bg-[#ececec] dark:bg-[#27272a] p-4 rounded-lg space-y-4 text-md">
+              {submission.testcaseResult.map((tc, index) => (
+                <TabsContent value={index} key={index}>
+                  <div className="bg-[#ececec] dark:bg-[#27272a] p-4 rounded-lg space-y-4 text-md">
+                    <p
+                      className={`text-xl font-semibold ${
+                        tc.status?.trim().toLowerCase() === "accepted"
+                          ? "text-[#2cbb5d]"
+                          : "text-[#ef4743]"
+                      }`}
+                    >
+                      {tc.status}
+                    </p>
 
-                                                            <p className={`text-xl font-semibold ${tc.status==="accepted" ? "text-[#2cbb5d]" : "text-[#ef4743]"}`}>{tc.status}</p>
-                            
-                                                            <div className="font-mono">
-                                                                <p className="text-muted-foreground font-semibold mb-1">Input</p>
-                                                                <pre className="bg-[#f5f5f4] dark:bg-[#353535] p-2 rounded-md whitespace-pre-wrap">{tc.stdin}</pre>
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-muted-foreground font-semibold mb-1">Expected Output</p>
-                                                                <pre className="bg-[#f5f5f4] dark:bg-[#353535] p-2 rounded-md whitespace-pre-wrap">{expOut[index]}</pre>
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-muted-foreground font-semibold mb-1">Your Output</p>
-                                                                <pre className="bg-[#f5f5f4] dark:bg-[#353535] p-2 rounded-md whitespace-pre-wrap">{tc.stdout}</pre>
-                                                            </div>
+                    <div className="font-mono">
+                      <p className="text-muted-foreground font-semibold mb-1">Input</p>
+                      <pre className="bg-[#f5f5f4] dark:bg-[#353535] p-2 rounded-md whitespace-pre-wrap">{tc.stdin}</pre>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground font-semibold mb-1">Expected Output</p>
+                      <pre className="bg-[#f5f5f4] dark:bg-[#353535] p-2 rounded-md whitespace-pre-wrap">{expOut[index]}</pre>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground font-semibold mb-1">Your Output</p>
+                      <pre className="bg-[#f5f5f4] dark:bg-[#353535] p-2 rounded-md whitespace-pre-wrap">{tc.stdout}</pre>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground font-semibold mb-1">Error</p>
+                      <pre className="bg-[#f5f5f4] dark:bg-[#353535] p-2 rounded-md whitespace-pre-wrap">{tc.stderr || "—"}</pre>
+                    </div>
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
+          </div>
+        </ScrollArea>
+      ) : (
+        <p className="text-muted-foreground">No test cases were executed.</p>
+      )
+    ) : submission ? (
+      // Submission summary (show only one result)
+      <div className="flex flex-col gap-6">
+        <div className="space-y-4">
+          <div>
+            {(() => {
+              const allAccepted = submission.status
+                .split("\n")
+                .every((res) => res.trim().toLowerCase() === "accepted");
+              const lastStatus = submission.status.split("\n").slice(-1)[0].trim();
+              const displayStatus = allAccepted
+                ? "Accepted"
+                : lastStatus === "Runtime Error (NZEC)"
+                ? "Runtime Error"
+                : lastStatus;
 
-                            
-                                                            <div>
-                                                                <p className="text-muted-foreground font-semibold mb-1">Error</p>
-                                                                <pre className="bg-[#f5f5f4] dark:bg-[#353535] p-2 rounded-md whitespace-pre-wrap">{tc.stderr || "—"}</pre>
-                                                            </div>
-                                                        </div>
-                                                    </TabsContent>
-                                                ))}
-                                            </Tabs>
-                                        ) : (
-                                            <p className="text-muted-foreground">No test cases were executed.</p>
-                                        )}
-                                    </div>
-                                </ScrollArea>
-                            )
-                        ) 
-                    :
-                    (
-                        submission 
-                            ? 
-                                <div className="flex flex-col gap-6">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <p className={` text-2xl ${submission?.status.split("\n").every((res) => res.toLowerCase() === "accepted") ? "text-[#2cbb52]" : "text-[#ef4743]"}`}>
-                                            {submission?.status.split("\n").every((res) => res.toLowerCase() === "accepted") ? "Accepted" : submission?.status.split("\n").slice(-1) == "Runtime Error (NZEC)" ? "Runtime Error" : submission?.status.split("\n").slice(-1) }
-                                            </p>
-                                            <p className={"flex items-center gap-2 py-2"}>
-                                                <img
-                                                    src={authenticatedUser.avatar || "https://avatar.iran.liara.run/public/boy"}
-                                                    alt="User"
-                                                    className="w-5 h-5 rounded-full border border-border object-cover"
-                                                />
-                                                <span className="text-black dark:text-white">
-                                                    {authenticatedUser.username}
-                                                </span>
-                                                <span className="text-muted-foreground">
-                                                    submitted at {formatDate(submission?.createdAt)}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center justify-center p-4 gap-4 rounded-lg border-border border">
-                                            <div className="border border-border rounded-xl p-4 bg-[#f5f5f4] dark:bg-[#27272b] w-1/2 space-y-1">
-                                                <div className="flex items-center gap-2 justify-center">
-                                                    <Clock />
-                                                    <span> Runtime</span> 
-                                                </div>
-                                                <p className="text-lg md:text-xl text-center" >{submission?.time}</p>
-                                            </div>
-                                            <div className="border border-border p-4 rounded-xl bg-[#f5f5f4] dark:bg-[#27272b] w-1/2 space-y-1">
-                                                <div className="flex items-center gap-2 justify-center">
-                                                    <MemoryStick />
-                                                    <span>Memory</span>
-                                                </div>
-                                                <p className="text-lg md:text-xl text-center">{submission?.memory}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2 border border-border rounded-lg p-4">
-                                        <p className="md:text-lg" >Your Code : </p>
-                                        <SyntaxHighlighter
-                                            language={solutionLang.toLowerCase()}
-                                            style={theme==="light" ? github : dracula}
-                                            wrapLongLines
-                                            customStyle={{ borderRadius: '0.5rem', fontSize: '0.9rem' }}
-                                        >
-                                            {submission?.sourceCode?.code ||
-                                            "No solution available for selected language."}
-                                        </SyntaxHighlighter>
-                                    </div>
-                                </div>
-                            :
+              return (
+                <p className={` text-2xl ${allAccepted ? "text-[#2cbb52]" : "text-[#ef4743]"}`}>
+                  {displayStatus}
+                </p>
+              );
+            })()}
 
-                            (
-                                <ScrollArea className="h-full pr-2">
-                                    <h2 className="text-xl font-semibold mb-2">Result</h2>
-                                    <p className="text-md whitespace-pre-wrap text-muted-foreground">
-                                        You must Run or Submit your code first.
-                                    </p>
-                                </ScrollArea>
-                            )
+            <p className={"flex items-center gap-2 py-2"}>
+              <img
+                src={authenticatedUser.avatar || "https://avatar.iran.liara.run/public/boy"}
+                alt="User"
+                className="w-5 h-5 rounded-full border border-border object-cover"
+              />
+              <span className="text-black dark:text-white">{authenticatedUser.username}</span>
+              <span className="text-muted-foreground">submitted at {formatDate(submission.createdAt)}</span>
+            </p>
+          </div>
+          <div className="flex items-center justify-center p-4 gap-4 rounded-lg border-border border">
+            <div className="border border-border rounded-xl p-4 bg-[#f5f5f4] dark:bg-[#27272b] w-1/2 space-y-1">
+              <div className="flex items-center gap-2 justify-center">
+                <Clock />
+                <span> Runtime</span>
+              </div>
+              <p className="text-lg md:text-xl text-center">{submission.time}</p>
+            </div>
+            <div className="border border-border p-4 rounded-xl bg-[#f5f5f4] dark:bg-[#27272b] w-1/2 space-y-1">
+              <div className="flex items-center gap-2 justify-center">
+                <MemoryStick />
+                <span>Memory</span>
+              </div>
+              <p className="text-lg md:text-xl text-center">{submission.memory}</p>
+            </div>
+          </div>
+        </div>
+        <div className="space-y-2 border border-border rounded-lg p-4">
+          <p className="md:text-lg">Your Code :</p>
+          <SyntaxHighlighter
+            language={solutionLang.toLowerCase()}
+            style={theme === "light" ? github : dracula}
+            wrapLongLines
+            customStyle={{ borderRadius: "0.5rem", fontSize: "0.9rem" }}
+          >
+            {submission.sourceCode?.code || "No solution available for selected language."}
+          </SyntaxHighlighter>
+        </div>
+      </div>
+    ) : (
+      <ScrollArea className="h-full pr-2">
+        <h2 className="text-xl font-semibold mb-2">Result</h2>
+        <p className="text-md whitespace-pre-wrap text-muted-foreground">
+          You must Run or Submit your code first.
+        </p>
+      </ScrollArea>
+    )}
+  </Card>
+</TabsContent>
 
-
-                    )
-                }
-            </Card>
-        </TabsContent>
 
         
         
