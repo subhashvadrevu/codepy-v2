@@ -24,8 +24,10 @@ export const createProblem = async(req, res) => {
             });
         }
 
+            if(referenceSolutions) {
 
-        for(const [language, solution] of Object.entries(referenceSolutions)) {
+
+                for(const [language, solution] of Object.entries(referenceSolutions)) {
             const languageId = getJudge0Id(language);
 
             if(!languageId) {
@@ -42,8 +44,6 @@ export const createProblem = async(req, res) => {
                     expected_output: output
                 }
             });
-
-            if(referenceSolutions) {
                 const tokens = await createBatchSubmission(submissions);
                 if(!tokens) {
                     return res.status(500).json({
