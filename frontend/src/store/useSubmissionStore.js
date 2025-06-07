@@ -19,7 +19,7 @@ export const useSubmissionStore = create((set) => ({
 
             const res = await axiosInstance.post("/submit/", { source_code, language_id, stdin, expected_output, problemId });
 
-            set({ submission: res.data.testcaseResults });
+            set({ submission: res.data.submissionWithTestCases });
             console.log(res.data);
             toast.success(res.data.message);
         } catch (error) {
@@ -36,8 +36,8 @@ export const useSubmissionStore = create((set) => ({
 
             const res = await axiosInstance.post("/submit/run", { source_code, language_id, stdin, expected_output, problemId });
 
-            set({ runSubmission: res.data.submissionWithTestCases });
-            console.log("salaaaaar : ",res.data?.submissionWithTestCases);
+            set({ runSubmission: res.data.testcaseResults });
+            console.log("salaaaaar : ",res.data?.testcaseResults);
             toast.success(res.data.message);
         } catch (error) {
             console.log(error);
