@@ -19,7 +19,7 @@ export const useSubmissionStore = create((set) => ({
 
             const res = await axiosInstance.post("/submit/", { source_code, language_id, stdin, expected_output, problemId });
 
-            set({ submission: res.data.submissionWithTestCases });
+            set({ submission: res.data.testcaseResults });
             console.log(res.data);
             toast.success(res.data.message);
         } catch (error) {
