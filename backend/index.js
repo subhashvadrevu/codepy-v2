@@ -21,6 +21,13 @@ app.use(cors({
     credentials: true
 }));
 
+
+app.use(express.static(path.join(__dirname, "dist"))); // or "build"
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
 app.get("/", (req, res) => {
     console.log('hello, welcome to codepy... ❤️')
 });
