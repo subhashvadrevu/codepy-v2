@@ -55,7 +55,7 @@ const App = () => {
               <Route path='/admin/addProblem' element={<AddProblemPage />} />
               <Route path='/admin/deleteProblem' element={<DeleteProblemPage />} />
             </Route>
-            <Route path='/problem/:id' element={<ProblemPage />} />
+            <Route path='/problem/:id' element={authenticatedUser ? <ProblemPage /> : <Navigate to={"/"} /> } />
           </Route>
         </Routes>
       </div>
