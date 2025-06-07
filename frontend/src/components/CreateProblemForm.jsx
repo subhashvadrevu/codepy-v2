@@ -63,7 +63,6 @@ const CreateProblemForm = () => {
       { value: "math", label: "Math"},
    ]
   
-      const [tags, setTags] = useState([]);
 
 
   const navigate = useNavigate();
@@ -689,71 +688,33 @@ public class Main {
 
               <div className="space-y-2">
                 <Label htmlFor="difficulty">Tags</Label>
-                <SelectMulti
-                            styles={{
-                                control: (base, state) => ({
-                                    ...base,
-                                    backgroundColor: theme === 'light' ? '#f5f4f4' : '#27272a',
-                                    color: theme === 'light' ? 'black' : '#fff',
-                                    boxShadow: state.isFocused ? "0 0 0 1px #ff6900" : "none",
-                                    border: "none"
-                                }),
-                                menu: (base) => ({
-                                    ...base,
-                                    backgroundColor: theme === 'light' ? '#f5f4f4' : '#27272a',
-                                    color: theme === 'light' ? 'black' : '#fff',
-                                }),
-                                option: (base, state) => ({
-                                    ...base,
-                                    backgroundColor: state.isFocused
-                                    ? theme === 'light'
-                                        ? '#ff6900'
-                                        : '#ff6900'
-                                    : theme === 'light'
-                                    ? '#f5f4f4'
-                                    : '#27272a',
-                                    color: state.isFocused
-                                    ? theme === 'light'
-                                        ? '#fff'
-                                        : '#fff'
-                                    : theme === 'light'
-                                    ? 'black'
-                                    : 'white',
-                                    cursor: 'pointer',
-                                }),
-                                multiValue: (base) => ({
-                                    ...base,
-                                    backgroundColor: theme === 'light' ? '#e4e4e7' : '#3f3f46',
-                                    color: theme === 'light' ? 'black' : '#fff',
-                                }),
-                                multiValueLabel: (base) => ({
-                                    ...base,
-                                    color: theme === 'light' ? 'black' : '#fff',
-                                }),
-                                multiValueRemove: (base) => ({
-                                    ...base,
-                                    color: theme === 'light' ? '#333' : '#fff',
-                                    ':hover': {
-                                    backgroundColor: theme === 'light' ? '#d4d4d8' : '#52525b',
-                                    color: theme === 'light' ? 'black' : '#fff',
-                                    },
-                                }),
-                                placeholder: (base) => ({
-                                    ...base,
-                                    color: theme === 'light' ? '#737373' : '#a1a1aa',
-                                }),
-                                singleValue: (base) => ({
-                                    ...base,
-                                    color: theme === 'light' ? 'black' : '#fff',
-                                }), 
-                            }}
-                            className='w-full rounded-lg'
-                            isMulti={true}
-                            options={tagOptions}
-                            placeholder={"Tags"}
-                            value={tagOptions.filter((tag) => tags.includes(tag.value))}
-                            onChange={(selectedOptions) => setTags(selectedOptions.map((option) => option.value))}
-                        />
+                <Controller
+  name="tags"
+  control={control}
+  render={({ field }) => (
+    <SelectMulti
+      styles={{
+        control: (base, state) => ({
+          ...base,
+          backgroundColor: theme === 'light' ? '#f5f4f4' : '#27272a',
+          color: theme === 'light' ? 'black' : '#fff',
+          boxShadow: state.isFocused ? "0 0 0 1px #ff6900" : "none",
+          border: "none"
+        }),
+        // ... (keep your existing custom styles)
+      }}
+      className='w-full rounded-lg'
+      isMulti={true}
+      options={tagOptions}
+      placeholder={"Tags"}
+      value={tagOptions.filter((tag) => field.value?.includes(tag.value))}
+      onChange={(selectedOptions) => {
+        field.onChange(selectedOptions.map((option) => option.value));
+      }}
+    />
+  )}
+/>
+
                 
               </div>
             </div>
