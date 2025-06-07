@@ -43,26 +43,28 @@ export const createProblem = async(req, res) => {
                 }
             });
 
-            const tokens = await createBatchSubmission(submissions);
-            if(!tokens) {
-                return res.status(500).json({
-                    error: "Internal server error"
-                });
-            }
-
-
-            const tokensArray = tokens.map(({ token }) => token);
-            const batchSubmissionResult = await getBatchSubmissionResult(tokensArray);
-            
-            for(let i = 0; i < batchSubmissionResult.length; i++) {
-                const result = batchSubmissionResult[i];
-                console.log(`Result ${i+1} : `, result);
-
-                if(result.status.id !== 3) {
-                    console.log('test case poyindi bro');
-                    return res.status(400).json({
-                        error: `Testcase ${i+1} - ${result.status.id} for language: ${language}, stderr: ${result.stderr}`
+            if(referenceSolutions) {
+                const tokens = await createBatchSubmission(submissions);
+                if(!tokens) {
+                    return res.status(500).json({
+                        error: "Internal server error"
                     });
+                }
+
+
+                const tokensArray = tokens.map(({ token }) => token);
+                const batchSubmissionResult = await getBatchSubmissionResult(tokensArray);
+                
+                for(let i = 0; i < batchSubmissionResult.length; i++) {
+                    const result = batchSubmissionResult[i];
+                    console.log(`Result ${i+1} : `, result);
+
+                    if(result.status.id !== 3) {
+                        console.log('test case poyindi bro');
+                        return res.status(400).json({
+                            error: `Testcase ${i+1} - ${result.status.id} for language: ${language}, stderr: ${result.stderr}`
+                        });
+                    }
                 }
             }
         }
@@ -77,8 +79,8 @@ export const createProblem = async(req, res) => {
                 examples, 
                 constraints, 
                 testcases, 
-                codeSnippets, 
-                referenceSolutions
+                codeSnippets: codeSnippets || "", 
+                referenceSolutions: referenceSolutions || ""
             }
         });
 
