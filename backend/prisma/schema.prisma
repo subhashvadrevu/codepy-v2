@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -14,20 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  ADMIN
-  USER
-}
-
-enum Difficulty {
-  EASY
-  MEDIUM
-  HARD
-}
-
 model User {
   id                String           @id @default(uuid())
-  username          String           @unique
   name              String?
   email             String           @unique
   avatar            String?
@@ -35,10 +17,11 @@ model User {
   password          String
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
-  problems          Problem[]
-  submissions       Submission[]
-  solvedProblems    SolvedProblems[]
+  username          String           @unique
   savedProblemsList List[]
+  problems          Problem[]
+  solvedProblems    SolvedProblems[]
+  submissions       Submission[]
 }
 
 model Problem {
@@ -58,12 +41,11 @@ model Problem {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
   user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  submissions        Submission[]
-  solvedBy           SolvedProblems[]
   problemsInList     ProblemsinList[]
+  solvedBy           SolvedProblems[]
+  submissions        Submission[]
 }
 
-// code submission
 model Submission {
   id             String           @id @default(uuid())
   userId         String
@@ -75,8 +57,8 @@ model Submission {
   status         String
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   problem        Problem          @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   testcaseResult TestcaseResult[]
 }
 
@@ -105,8 +87,8 @@ model SolvedProblems {
   problemId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, problemId])
 }
@@ -116,10 +98,10 @@ model List {
   name        String           @unique
   description String
   userId      String
-  problems    ProblemsinList[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problems    ProblemsinList[]
 }
 
 model ProblemsinList {
@@ -128,8 +110,19 @@ model ProblemsinList {
   listId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
   list      List     @relation(fields: [listId], references: [id], onDelete: Cascade)
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
-  @@unique([listId, problemId]) // in a playlist a problem can be added only once
+  @@unique([listId, problemId])
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
 }
