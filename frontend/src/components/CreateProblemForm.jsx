@@ -590,7 +590,7 @@ public class Main {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-7xl dark:bg-black">
+    <div className="container mx-auto py-8 px-4 max-w-7xl overflow-y-visible">
       <Card>
         <CardHeader>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
