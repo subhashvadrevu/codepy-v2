@@ -87,7 +87,7 @@ const Navbar = () => {
                   <BadgeIndianRupee className="fill-yellow-500 stroke-yellow-500" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Earn Pycoins to unlock editorials</p>
+                  <p><span className="">Pycoins,</span> Coming Soon...</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -201,6 +201,7 @@ const Navbar = () => {
                   className="w-full mt-2"
                   onClick={() => {
                     logout();
+                    sessionStorage.removeItem("role");
                     setMobileOpen(false);
                   }}
                 >

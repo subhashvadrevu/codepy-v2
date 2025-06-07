@@ -15,7 +15,11 @@ import { useProblemStore } from '@/store/useProblemStore.js';
 
 const Filters = ({
     problems, 
-    setProblems
+    setProblems,
+    pageNo,
+    setTotCount,
+    probCount,
+    setCurrProbLen
 }) => {
 
     const { theme } = useThemeStore();
@@ -60,6 +64,7 @@ const Filters = ({
             return;
         }
 
+        setTotCount(problems.length);
 
         if(tags.toLowerCase() === "all") {
             tagFiltered = problems;
@@ -123,15 +128,23 @@ const Filters = ({
             searchFiltered = statusFiltered
         } 
 
+        if(!Array.isArray(searchFiltered) ||  searchFiltered.length === 0) {
+            setProblems([]);
+            return;
+        }
+
+        setCurrProbLen(searchFiltered.length);
+
+        const pageFiltered = searchFiltered.slice(pageNo*probCount , (pageNo+1)*probCount);
 
 
-        setProblems(searchFiltered);
+        setProblems(pageFiltered);
 
     };
 
     useEffect(() => {
         filterProblems()
-    },[tags, difficulty, solvedStatus, searchTitle]);
+    },[tags, difficulty, solvedStatus, searchTitle, pageNo]);
 
 
   return (

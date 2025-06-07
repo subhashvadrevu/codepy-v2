@@ -77,7 +77,7 @@ const CreateProblemForm = () => {
       navigate("/");
     } catch (error) {
       console.log("problem creation error: ", error);
-      toast.error("Error creating problem");
+      toast.error(error.response.data.error);
     } finally {
       setIsLoading(false);
     }
@@ -403,22 +403,22 @@ const sampleStringProblem = {
     rl.close();
   });`,
     PYTHON: `class Solution:
-      def isPalindrome(self, s: str) -> bool:
-          # Write your code here
-          pass
+  def isPalindrome(self, s: str) -> bool:
+  # Write your code here
+    pass
   
   # Input parsing
-  if __name__ == "__main__":
-      import sys
-      # Read the input string
-      s = sys.stdin.readline().strip()
+if __name__ == "__main__":
+  import sys
+  # Read the input string
+  s = sys.stdin.readline().strip()
       
-      # Call solution
-      sol = Solution()
-      result = sol.isPalindrome(s)
+  # Call solution
+  sol = Solution()
+  result = sol.isPalindrome(s)
       
-      # Output result
-      print(str(result).lower())  # Convert True/False to lowercase true/false`,
+  # Output result
+  print(str(result).lower())  # Convert True/False to lowercase true/false`,
     JAVA: `import java.util.Scanner;
 
 public class Main {
@@ -482,25 +482,25 @@ public class Main {
     rl.close();
   });`,
     PYTHON: `class Solution:
-      def isPalindrome(self, s: str) -> bool:
-          # Convert to lowercase and keep only alphanumeric characters
-          filtered_chars = [c.lower() for c in s if c.isalnum()]
+  def isPalindrome(self, s: str) -> bool:
+    # Convert to lowercase and keep only alphanumeric characters
+    filtered_chars = [c.lower() for c in s if c.isalnum()]
           
-          # Check if it's a palindrome
-          return filtered_chars == filtered_chars[::-1]
+    # Check if it's a palindrome
+    return filtered_chars == filtered_chars[::-1]
   
   # Input parsing
-  if __name__ == "__main__":
-      import sys
-      # Read the input string
-      s = sys.stdin.readline().strip()
+if __name__ == "__main__":
+  import sys
+  # Read the input string
+  s = sys.stdin.readline().strip()
+    
+  # Call solution
+  sol = Solution()
+  result = sol.isPalindrome(s)
       
-      # Call solution
-      sol = Solution()
-      result = sol.isPalindrome(s)
-      
-      # Output result
-      print(str(result).lower())  # Convert True/False to lowercase true/false`,
+  # Output result
+  print(str(result).lower())  # Convert True/False to lowercase true/false`,
     JAVA: `import java.util.Scanner;
 
 public class Main {
@@ -762,52 +762,6 @@ public class Main {
               </div>
             </div>
 
-
-
-            {/* Tags */}
-            {/* <Card> */}
-              {/* <CardHeader className="px-4">
-                {/* <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="w-5 h-5" />
-                    <CardTitle>Tags</CardTitle>
-                  </div> */}
-                  {/* <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => appendTag("")}
-                  >
-                    <Plus className="w-4 h-4 mr-1" /> Add Tag
-                  </Button> */}
-                {/* </div> */}
-              {/* </CardHeader> */}
-              {/* <CardContent className="px-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {tagFields.map((field, index) => (
-                    <div key={field.id} className="flex gap-2 items-center">
-                      <Input
-                        {...register(`tags.${index}`)}
-                        placeholder="Enter tag"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeTag(index)}
-                        disabled={tagFields.length === 1}
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-                {errors.tags && (
-                  <p className="mt-2 text-sm font-medium text-destructive">
-                    {errors.tags.message}
-                  </p>
-                )}
-              </CardContent>
-            </Card> */}
 
             {/* Test Cases */}
             <Card>
