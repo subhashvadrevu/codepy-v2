@@ -7,6 +7,10 @@ export const useSubmissionStore = create((set) => ({
     submission: null,
     isLoadingSubmissions: false,
     submissionsById: null,
+    isLoadingAllSubmissions: false,
+    allSubmissions: null,
+    isFetchingCount: false,
+    submissionsCount: null,
 
     submitCode: async(source_code, language_id, stdin, expected_output, problemId) => {
         try {
@@ -39,6 +43,45 @@ export const useSubmissionStore = create((set) => ({
         } finally {
             set({ isLoadingSubmissions: false })
         }
-    }
+    },
+
+    getAllSubmissions: async() => {
+        try {
+            set({ isLoadingAllSubmissions: true });
+            
+            const res = await axiosInstance.get("/submit/getAllSubmissions");
+            console.log("all submissions: ", res.data);
+
+            set({ allSubmissions: res.data.submissionsByUser });
+
+            // toast.success(res.data.message);
+
+        } catch (error) {
+            console.log("error fetching all submissions : ",error);
+            toast.error("Error fetching all submissions");
+        } finally {
+            set({ isLoadingAllSubmissions: false });
+        }
+    },
+
+    getSubmissionsCountByUser: async(username) => {
+        try {
+            set({ isFetchingCount: true });
+
+            const res = await axiosInstance.get(`/submit/getTotalSubmissionsByUser/${username}`);
+            console.log("count sub: ", res.data);
+
+            set({ submissionsCount: res.data.count });
+
+            // toast.success(res.data.message);
+
+        } catch (error) {
+            console.log("error fetching count: ", error);
+            // toast.error("Error fetching submission count");
+
+        } finally {
+            set({ isFetchingCount: false });
+        }
+    },
 
 }));

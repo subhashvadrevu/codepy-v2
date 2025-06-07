@@ -14,6 +14,7 @@ import AdminPage from './pages/AdminPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ProblemPage from './pages/ProblemPage.jsx';
 import { useThemeStore } from './store/useThemeStore.js';
+import ViewAllSubmissions from './components/ViewAllSubmissions.jsx';
 
 const App = () => {
 
@@ -46,7 +47,8 @@ const App = () => {
             <Route path='/problems' element={authenticatedUser ? <HomePage />: <Navigate to={"/login"} />} />
             <Route path='/login' element={!authenticatedUser ? <LoginPage /> : <Navigate to={"/"} /> } />
             <Route path='/signup' element={!authenticatedUser ? <SignupPage /> : <Navigate to={"/"} /> } /> 
-            <Route path='/user/:username' element={<ProfilePage />} />
+            <Route path='/me' element={authenticatedUser ? <ProfilePage /> : <Navigate to={"/"} /> } />
+            <Route path="/viewAllSubmissions" element={authenticatedUser ? <ViewAllSubmissions /> : <Navigate to={"/"} /> } />
             <Route path='/admin' element={<AdminPanelPage />}>
               <Route index element={<AdminPage />} />
               <Route path='/admin/addProblem' element={<AddProblemPage />} />

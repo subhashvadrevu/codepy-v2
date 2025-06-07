@@ -106,7 +106,7 @@ const Navbar = () => {
                 {showDropdown && (
                   <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-zinc-900 border border-border rounded-md shadow-lg z-50 p-2 space-y-1">
                     <Link
-                      to={`/user/${authenticatedUser.username}`}
+                      to={"/me"}
                       className="block p-2 text-sm text-center hover:bg-accent hover:text-accent-foreground rounded"
                     >
                       {authenticatedUser.name || "Profile"}
@@ -183,7 +183,7 @@ const Navbar = () => {
           <div className="mt-4 border-t border-border pt-3 space-y-2">
             {authenticatedUser ? (
               <>
-                <Link to={`/user/${authenticatedUser.username}`} onClick={() => setMobileOpen(false)}>
+                <Link to={"/me"} onClick={() => setMobileOpen(false)}>
                   <div className="block px-4 py-2 rounded-md text-sm text-center font-medium hover:bg-accent hover:text-accent-foreground">
                     {authenticatedUser.name || "Profile"}
                   </div>

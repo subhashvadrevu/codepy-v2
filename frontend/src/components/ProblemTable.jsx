@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useProblemStore } from '@/store/useProblemStore';
 import { BadgeCheck } from 'lucide-react';
 import { PaginationEx } from './Pagination';
+import { Badge } from './ui/badge';
 
 const ProblemTable = (props) => {
 
@@ -18,19 +19,10 @@ const ProblemTable = (props) => {
 
     useEffect(() => {
         getSolvedProblemsByUser();
-    }, [getSolvedProblemsByUser]);
+    }, []);
 
     const inSolvedProblems = (problemId) => {
-        if(!solvedProblems) {
-            return false;
-        }
-        
-        const inSolved = solvedProblems.some((problem) => problem.id === problemId)
-        
-        if(!inSolved)
-            return false;
-        else
-            return true;
+        return solvedProblems?.some(problem => problem.id === problemId) || false;
     }
 
   return (
@@ -51,8 +43,15 @@ const ProblemTable = (props) => {
                     Array.isArray(problems) && problems.length > 0 ?
                     problems.map((problem, index) => (
                         <tr key={problem.id || index} className='grid grid-cols-12 gap-2'>
-                            <td className='col-span-2 text-center p-3 bg-white dark:bg-[#27272a]'>{pageNo*probCount + index +1}</td>
-                            <td className='col-span-8 text-center p-3 bg-white dark:bg-[#27272a] hover:cursor-pointer' onClick={() => navigate(`/problem/${problem.id}`)}>{problem.title}</td>
+                            <td className='col-span-2 text-center p-3 bg-white dark:bg-[#27272a]'>
+                                {inSolvedProblems(problem.id) 
+                                ? 
+                                    <Badge className={"bg-[#2cbb52]"}>Solved</Badge> 
+                                :
+                                    pageNo*probCount + index +1
+                                }
+                            </td>
+                            <td className={`col-span-8 text-center p-3 hover:cursor-pointer bg-white dark:bg-[#27272a]" }`} onClick={() => navigate(`/problem/${problem.id}`)}>{problem.title}</td>
                             <td className={`col-span-2 text-center p-3 bg-white dark:bg-[#27272a] font-semibold dark:font-normal font-mono ${problem.difficulty === "EASY" && "text-[#2cbb52]"} ${problem.difficulty === "MEDIUM" && "text-[#fcb700]"} ${problem.difficulty === "HARD" && "text-[#ff6467]"}`}>{problem.difficulty.slice(0,1) + problem.difficulty.toLowerCase().slice(1)}</td>
                         </tr>
                     ))

@@ -47,16 +47,16 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, expOut,
 
   const formatDate = (rawDate) => {
   const date = new Date(rawDate);
-  return date.toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Asia/Kolkata",
-    });
-};
+    return date.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "Asia/Kolkata",
+        });
+    };
 
   if (!problem || !authenticatedUser) {
     return (

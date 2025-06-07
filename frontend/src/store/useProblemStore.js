@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "@/utilities/axios";
-import toast from "react-hot-toast";    
+import toast from "react-hot-toast"; 
 
 
 export const useProblemStore = create((set) => ({
@@ -50,7 +50,7 @@ export const useProblemStore = create((set) => ({
             const res = await axiosInstance.get("/problems/getSolvedProblems");
             console.log("solved problems of user: ", res.data);
 
-            set({ solvedProblems: res.data.problems });
+            set({ solvedProblems: res.data.solvedProblemsByUser });
 
             // toast.success("Solved problems fetched successfully");
 
@@ -58,6 +58,24 @@ export const useProblemStore = create((set) => ({
             console.log("Error fetching solved problems by user: ", error);
             toast.error("Error fetching solved problems by user");
         }
-    }
+    },
+
+    getProblemByIdWithData: async(id) => {
+        try {
+            set({ isProblemLoading: true });
+
+            const res = await axiosInstance.get(`/problems/getProblem/${id}`);
+            console.log("fetched problem: ", res.data);
+
+            return res.data.problem;
+
+
+        } catch (error) {
+            console.log("error fetching problem :", error);
+            toast.error("Error fetching problem with given id");
+        } finally {
+            set({ isProblemLoading: false });
+        }
+    },
 
 }));
