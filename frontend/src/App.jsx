@@ -28,7 +28,7 @@ const App = () => {
 
   useEffect(() => {
     document.body.className = theme;
-  }, [theme]);
+  }, []);
 
   if(isCheckingAuth && !authenticatedUser) {
     return (
