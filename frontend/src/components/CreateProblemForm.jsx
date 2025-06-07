@@ -63,6 +63,7 @@ const CreateProblemForm = () => {
       { value: "math", label: "Math"},
    ]
   
+      const [tags, setTags] = useState([]);
 
 
   const navigate = useNavigate();
