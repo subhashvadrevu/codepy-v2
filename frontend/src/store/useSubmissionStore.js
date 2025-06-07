@@ -37,7 +37,7 @@ export const useSubmissionStore = create((set) => ({
             const res = await axiosInstance.post("/submit/run", { source_code, language_id, stdin, expected_output, problemId });
 
             set({ runSubmission: res.data.submissionWithTestCases });
-            console.log("salaaaaar : ",res.data.submissionWithTestCases);
+            console.log("salaaaaar : ",res.data?.submissionWithTestCases);
             toast.success(res.data.message);
         } catch (error) {
             console.log(error);

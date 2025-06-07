@@ -156,6 +156,7 @@ export const runCode = async(req, res) => {
     const { source_code, language_id, stdin, expected_output, problemId } = req.body;
 
     try {
+        console.log('enn vachesa')
         if(
             !Array.isArray(stdin) ||
             stdin.length === 0 || 
@@ -210,26 +211,19 @@ export const runCode = async(req, res) => {
 
         console.log("this is soucre code : ", source_code, typeof(source_code));
 
-        const maxTimeArray = detailedResults.map((r) => parseFloat(r.time || "0"));
-        const maxTimeValueInS = Math.max(...maxTimeArray);
-        const maxTimeValueInMs = (maxTimeValueInS * 1000).toFixed(3);
-
-        const maxMemoryArray = detailedResults.map((r) => parseFloat(r.memory || "0"));
-        const maxMemoryValueInKb = Math.max(...maxMemoryArray);
-        const maxMemoryValueInMb = (maxMemoryValueInKb / 1024).toFixed(3);
-
-
         const testcaseResults = detailedResults.map((result) => ({
-            testcaseNumber: result.testcase,
-            accepted: result.status === "Accepted" ? true : false,
-            stdin: `${result.stdin}`,
-            stdout: `${result.stdout}`,
-            stderr: result.stderr,
-            compileOutput: result.compile_output,
-            status: result.status,
-            time: result.time,
-            memory: result.memory,
+            testcaseNumber: result?.testcase,
+            accepted: result?.status === "Accepted" ? true : false,
+            stdin: `${result?.stdin}`,
+            stdout: `${result?.stdout}`,
+            stderr: result?.stderr,
+            compileOutput: result?.compile_output,
+            status: result?.status,
+            time: result?.time,
+            memory: result?.memory,
         }));
+
+        console.log("tcr : ",testcaseResults)
 
 
         return res.status(200).json({
