@@ -754,11 +754,7 @@ public class Main {
                             value={tagOptions.filter((tag) => tags.includes(tag.value))}
                             onChange={(selectedOptions) => setTags(selectedOptions.map((option) => option.value))}
                         />
-                {errors.tags && (
-                  <p className="text-sm font-medium text-destructive">
-                    {errors.tags.message}
-                  </p>
-                )}
+                
               </div>
             </div>
 
