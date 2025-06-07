@@ -29,6 +29,23 @@ export const useSubmissionStore = create((set) => ({
         }
     },
 
+    runCode: async(source_code, language_id, stdin, expected_output, problemId) => {
+        try {
+            set({ isExecuting: true });
+
+            const res = await axiosInstance.post("/submit/run", { source_code, language_id, stdin, expected_output, problemId });
+
+            set({ submission: res.data.submissionWithTestCases });
+            console.log(res.data);
+            toast.success(res.data.message);
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response.statusText || "Error submitting code... Try again");
+        } finally {
+            set({ isExecuting: false });
+        }
+    },
+
     getSubmissionsById: async(problemId) => {
         try {
             set({ isLoadingSubmissions: true })

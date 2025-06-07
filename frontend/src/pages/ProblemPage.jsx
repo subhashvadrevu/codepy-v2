@@ -36,7 +36,7 @@ const ProblemPage = () => {
   }, [problem, selectedLang]);
 
 
-  const { submitCode, isExecuting, submission, isLoadingSubmissions, submissionsById, getSubmissionsById } = useSubmissionStore();
+  const { submitCode, runCode, isExecuting, submission, isLoadingSubmissions, submissionsById, getSubmissionsById } = useSubmissionStore();
 
   const [isRunCode, setIsRunCode] = useState(true);
 
@@ -49,7 +49,7 @@ const ProblemPage = () => {
     const exp_out = problem.testcases.slice(0,3).map(({input, output}) => output);
     const id = problem.id;
     console.log("endayya idi:",code, languageId, stdin, exp_out, id);
-    await submitCode(code, languageId, stdin, exp_out, id);
+    await runCode(code, languageId, stdin, exp_out, id);
     setActiveTab("result");
     setExpOut(exp_out);
   };
