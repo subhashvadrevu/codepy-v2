@@ -75,7 +75,7 @@ const Navbar = () => {
             />
           ) : (
             <Sun
-              className="h-5 w-5 cursor-pointer"
+              className="h-5 w-5 cursor-pointer stroke-white"
               onClick={toggleTheme}
             />
           )}
