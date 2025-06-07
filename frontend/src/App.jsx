@@ -12,6 +12,7 @@ import AdminPanelPage from './pages/AdminPanelPage.jsx';
 import AddProblemPage from './pages/AddProblemPage.jsx';
 import AdminPage from './pages/AdminPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import ProblemPage from './pages/ProblemPage.jsx';
 import { useThemeStore } from './store/useThemeStore.js';
 
 const App = () => {
@@ -50,7 +51,8 @@ const App = () => {
               <Route index element={<AdminPage />} />
               <Route path='/admin/addProblem' element={<AddProblemPage />} />
             </Route>
-            </Route>
+            <Route path='/problem/:id' element={<ProblemPage />} />
+          </Route>
         </Routes>
       </div>
     </>

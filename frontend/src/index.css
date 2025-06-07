@@ -126,3 +126,5 @@ body {
   }
 }
 
+
+@plugin 'tailwind-scrollbar';
