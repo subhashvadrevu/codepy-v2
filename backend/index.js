@@ -4,10 +4,10 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 
-import authRoutes from "./routes/auth.routes.js";
-import problemRoutes from "./routes/problem.routes.js";
-import submissionRoutes from "./routes/submission.routes.js";
-import listRoutes from "./routes/list.routes.js";
+import authRoutes from "./src/routes/auth.routes.js";
+import problemRoutes from "./src/routes/problem.routes.js";
+import submissionRoutes from "./src/routes/submission.routes.js";
+import listRoutes from "./src/routes/list.routes.js";
 
 dotenv.config();
 
