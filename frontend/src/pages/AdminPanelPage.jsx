@@ -13,7 +13,7 @@ const AdminPanelPage = () => {
         </div>
     }
 
-    if(sessionStorage.getItem("role") !== "ADMIN") {
+    if(!authenticatedUser || sessionStorage.getItem("role") !== "ADMIN") {
         return <Navigate to="/" />
     }
 

@@ -36,7 +36,7 @@ export const useAuthStore = create((set) => ({
             toast.success(res.data.message);
         } catch (error) {
             console.log("error signing up : ", error);
-            toast.error("Error signing up");
+            toast.error(error.response.data.error);
         } finally {
             set({ isSigningUp: false });
         }
@@ -53,7 +53,7 @@ export const useAuthStore = create((set) => ({
             toast.success(res.data.message);
         } catch (error) {
             console.log("error logging in : ", error);
-            toast.error("Error logging in");
+            toast.error(error.response.data.error);
         } finally {
             set({ isLoggingIn: false });
         }
@@ -67,7 +67,7 @@ export const useAuthStore = create((set) => ({
             toast.success("Logout successful");
         } catch (error) {
             console.log("Error logging out: ", error);
-            toast.error("Error logging out");
+            toast.error(error.response.data.error);
         }
     },
 
@@ -80,7 +80,7 @@ export const useAuthStore = create((set) => ({
             toast.success("Account deleted successfully");
         } catch (error) {
             console.log("Error deleting account: ", error);
-            toast.error("Error deleting account");
+            toast.error(error.response.data.error);
         } finally {
             set({ isDeletingAccount: false });
         }
