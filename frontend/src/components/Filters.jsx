@@ -70,7 +70,7 @@ const Filters = ({
             tagFiltered = problems;
         }
         else {
-            tagFiltered = problems.filter((problem) => problem.tags.some((problemTag) => problemTag.toLowerCase() === tags.toLowerCase()))
+            tagFiltered = problems.filter((problem) => problem.tags.some((problemTag) => problemTag.trim().toLowerCase() == tags.trim().toLowerCase()))
         }
             
         if(!Array.isArray(tagFiltered) || tagFiltered.length === 0) {
