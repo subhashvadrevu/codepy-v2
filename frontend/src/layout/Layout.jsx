@@ -8,7 +8,7 @@ const Layout = () => {
     <div className='w-full'>
         <Navbar />
         <Outlet />
-        <Footer />
+        {/* <Footer /> */}
     </div>
   )
 }
