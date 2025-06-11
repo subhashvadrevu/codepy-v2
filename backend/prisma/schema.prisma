@@ -19,11 +19,11 @@ model User {
   updatedAt         DateTime             @updatedAt
   username          String               @unique
   isVerified        Boolean              @default(false)
-  verificationOtp   UserOtpVerification?
   savedProblemsList List[]
   problems          Problem[]
   solvedProblems    SolvedProblems[]
   submissions       Submission[]
+  verificationOtp   UserOtpVerification?
 }
 
 model Problem {
@@ -120,13 +120,11 @@ model ProblemsinList {
 
 model UserOtpVerification {
   id        String   @id @default(uuid())
-  userId    String
+  userId    String   @unique
   otp       String
   createdAt DateTime @default(now())
   expiresAt DateTime
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId])
 }
 
 enum UserRole {

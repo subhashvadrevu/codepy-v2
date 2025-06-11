@@ -21,6 +21,8 @@ export const authMiddleware = async(req, res, next) => {
             })
         }
 
+        console.log(decoded);
+
         const user = await db.user.findUnique({
             where: {
                 id: decoded.id
