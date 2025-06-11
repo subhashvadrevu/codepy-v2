@@ -75,7 +75,7 @@ export const createProblem = async(req, res) => {
                 tags: tags.map((tag) => tag.value), 
                 userId: req.user.id,
                 examples, 
-                constraints, 
+                constraints: constraints , 
                 testcases, 
                 codeSnippets: codeSnippets || "", 
                 referenceSolutions: referenceSolutions || ""

@@ -136,8 +136,8 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
                                 <h4 className="mt-4 text-black dark:text-white">Constraints</h4>
                                 {/* <p className="whitespace-pre-wrap font-mono bg-[#f5f5f4] dark:bg-[#27272b] rounded-lg w-fit p-2">{problem.constraints}</p> */}
                                 <ul className="list-disc whitespace-pre-wrap font-mono bg-[#f5f5f4] dark:bg-[#27272b] rounded-lg p-2 pl-8">
-                                    {problem.constraints.map((c, index) => { 
-                                      const constraint = `<p>${c}</p>`
+                                    {problem.split("\n").constraints.map((c, index) => { 
+                                      const constraint = `<p>${c.trim()}</p>`
                                       return (  
                                         <li key={index}>
                                           <Markdown rehypePlugins={[rehypeRaw]}>{constraint}</Markdown>
