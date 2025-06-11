@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { db } from "../libs/db.js"
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../utilities/email.utility.js";
 
 
 export const register = async(req, res) => {
@@ -38,7 +39,7 @@ export const register = async(req, res) => {
 
         res.cookie("jwt", token, {
             httpOnly: true,
-            sameSite: "None",
+            sameSite: "strict",
             secure: true,
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
@@ -64,6 +65,164 @@ export const register = async(req, res) => {
         });
     }
 };
+
+
+export const generate = async(req, res) => {
+    const userId = req.user.id;
+  
+    try {
+
+        const alreadyVerified = await db.user.findUnique({
+            where: {
+                id: userId
+            },
+            select: {
+                isVerified: true
+            }
+        });
+
+        if(alreadyVerified.isVerified) {
+            return res.status(400).json({
+                error: "User already verified"
+            });
+        }
+
+
+        const existingOtpRequest = await db.userOtpVerification.findUnique({
+            where: {
+                userId
+            }
+        });
+
+
+        if(existingOtpRequest && existingOtpRequest.expiresAt > new Date()) {
+            return res.status(400).json({
+                error: "Your previous otp is still active"
+            });
+        }
+
+
+        const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        if(!newOtp) {
+            return res.status(400).json({
+                error: "Error generating otp, try again after 15 min..."
+            });
+        }
+
+        const newOtpRequest = await db.userOtpVerification.upsert({
+            where: {
+                userId
+            },
+            update: {
+                otp: newOtp,
+                createdAt: new Date(),
+                expiresAt: new Date(Date.now() + 15 * 60 * 1000)
+            },
+            create: {
+                userId, 
+                otp: newOtp,
+                expiresAt: new Date(Date.now() + 15 * 60 * 1000)
+            }
+        });
+
+        if(!newOtpRequest) {
+            return res.status(400).json({
+                error: "Error generating otp, try again after 15 min..."
+            });
+        }
+
+        const user = await db.user.findUnique({
+            where: {
+                id: userId
+            },
+            select: {
+                email: true,
+                name: true,
+            }
+        });
+
+        if(!user || !user?.email) {
+            return res.status(400).json({
+                error: "Error fetching email, try again..."
+            });
+        }
+
+        const emailResponse = await sendEmail(user?.email, newOtp, user?.name);
+
+        if(!emailResponse) {
+            return res.status(400).json({
+                error: "Error sending email"
+            });
+        }
+
+        return res.status(200).json({
+            success: true, 
+            message: "Otp sent successfully",
+        });
+
+    } catch (error) {
+        console.log("otp generation error: ", error);
+        return res.status(500).json({
+            error: "Error generating otp, Try after sometime..."
+        });
+    }
+};
+
+
+export const verify = async(req, res) => {
+    const { otp } = req.body;
+    const userId = req.user.id;
+
+    try {
+        const verifyOtp = await db.userOtpVerification.findUnique({
+            where: {
+                userId,
+            }
+        })
+
+        if(verifyOtp.otp != otp) {
+            return res.status(400).json({
+                error: "Invalid OTP"
+            });
+        }
+
+        if(verifyOtp.expiresAt < new Date()) {
+            return res.status(400).json({
+                error: "OTP expired"
+            });
+        }
+
+        await db.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                isVerified: true,
+            }
+        });
+
+        await db.userOtpVerification.update({
+            where: {
+                userId
+            },
+            data: {
+                expiresAt: new Date(Date.now())
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Email verification successful"
+        });
+
+    } catch (error) {
+        console.log("otp verification error: ", error);
+        return res.status(500).json({
+            error: "Error verifying otp, Try after sometime..."
+        });
+    }
+};
+
 
 export const login = async(req, res) => {
     const { email, password } = req.body;
@@ -95,7 +254,7 @@ export const login = async(req, res) => {
 
         res.cookie("jwt", token,  {
             httpOnly: true,
-            sameSite: "None",
+            sameSite: "strict",
             secure: true,
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
@@ -109,7 +268,8 @@ export const login = async(req, res) => {
                 email: existingUser.email,
                 name: existingUser.name,
                 role: existingUser.role,
-                image: existingUser?.image
+                image: existingUser?.image,
+                isVerified: existingUser.isVerified,
             }
         })
 

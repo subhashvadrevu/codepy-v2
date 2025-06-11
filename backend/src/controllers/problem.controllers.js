@@ -4,6 +4,8 @@ import { createBatchSubmission, getBatchSubmissionResult, getJudge0Id } from "..
 export const createProblem = async(req, res) => {
     const { title, description, difficulty, tags, examples, constraints, testcases, codeSnippets, referenceSolutions } = req.body;
 
+
+    console.log("hahah:",req.body);
     if(req.user.role !== "ADMIN") {
         return res.status(403).json({
             error: "Access denied"
@@ -24,10 +26,7 @@ export const createProblem = async(req, res) => {
             });
         }
 
-            if(referenceSolutions) {
-
-
-                for(const [language, solution] of Object.entries(referenceSolutions)) {
+        for(const [language, solution] of Object.entries(referenceSolutions)) {
             const languageId = getJudge0Id(language);
 
             if(!languageId) {
@@ -41,30 +40,29 @@ export const createProblem = async(req, res) => {
                     source_code: solution,
                     language_id: languageId,
                     stdin: input,
-                    expected_output: output
+                    expected_output: output+"\n"
                 }
             });
-                const tokens = await createBatchSubmission(submissions);
-                if(!tokens) {
-                    return res.status(500).json({
-                        error: "Internal server error"
-                    });
-                }
+            const tokens = await createBatchSubmission(submissions);
+            if(!tokens) {
+                return res.status(500).json({
+                    error: "Internal server error"
+                });
+            }
 
 
-                const tokensArray = tokens.map(({ token }) => token);
-                const batchSubmissionResult = await getBatchSubmissionResult(tokensArray);
+            const tokensArray = tokens.map(({ token }) => token);
+            const batchSubmissionResult = await getBatchSubmissionResult(tokensArray);
                 
-                for(let i = 0; i < batchSubmissionResult.length; i++) {
-                    const result = batchSubmissionResult[i];
-                    console.log(`Result ${i+1} : `, result);
+            for(let i = 0; i < batchSubmissionResult.length; i++) {
+                const result = batchSubmissionResult[i];
+                console.log(`Result ${i+1} : `, result);
 
-                    if(result.status.id !== 3) {
-                        console.log('test case poyindi bro');
-                        return res.status(400).json({
-                            error: `Testcase ${i+1} - ${result.status.id} for language: ${language}, stderr: ${result.stderr}`
-                        });
-                    }
+                if(result.status.id !== 3) {
+                    console.log('test case poyindi bro');
+                    return res.status(400).json({
+                        error: `Testcase ${i+1} - ${result.status.id} for language: ${language}, stderr: ${result.stderr}`
+                    });
                 }
             }
         }
@@ -74,7 +72,7 @@ export const createProblem = async(req, res) => {
                 title, 
                 description, 
                 difficulty, 
-                tags, 
+                tags: tags.map((tag) => tag.value), 
                 userId: req.user.id,
                 examples, 
                 constraints, 
