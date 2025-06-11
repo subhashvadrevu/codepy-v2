@@ -42,9 +42,9 @@ const CreateProblemForm = () => {
       const { theme } = useThemeStore();
   
       const tagOptions = [
-      { value: "arrays", label: "Arrays" },
+      { value: "array", label: "Array" },
       { value: "string", label: "String" },
-      { value: "hashmap", label: "Hashmap" },
+      { value: "hash table", label: "Hash Table" },
       { value: "dynamic programming", label: "Dynamic Programming" },
       { value: "tree", label: "Tree" },
       { value: "graph", label: "Graph" },
@@ -61,15 +61,16 @@ const CreateProblemForm = () => {
       { value: "queue", label: "Queue" },
       { value: "heap", label: "Heap" },
       { value: "math", label: "Math"},
+      { value: "prefix sum", label: "Prefix Sum" },
    ]
-  
-      const [tags, setTags] = useState([]);
 
 
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
   const onSubmit = async(data) => {
     try {
-      console.log("idi data ra babu : ",data);
+      console.log("Form data being submitted: ", data);
       setIsLoading(true);
       const res = await axiosInstance.post("/problems/createProblem", data);
       console.log("Problem creation request sent : ", res.data);
@@ -77,481 +78,32 @@ const CreateProblemForm = () => {
       navigate("/");
     } catch (error) {
       console.log("problem creation error: ", error);
-      toast.error(error.response.data.error);
+      toast.error(error?.response?.data?.error || "Failed to create problem");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Add form validation error handler
+  const onError = (errors) => {
+    console.log("Form validation errors:", errors);
+    toast.error("Please fix the form errors before submitting");
+  };
 
-  const [sampleType, setSampleType] = useState("DP")
-
-const sampledpData = {
-  title: "Climbing Stairs",
-  category: "dp", // Dynamic Programming
-  description:
-    "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
-  difficulty: "EASY",
-  tags: ["dynamic programming"],
-  constraints: "1 <= n <= 45",
-  hints:
-    "To reach the nth step, you can either come from the (n-1)th step or the (n-2)th step.",
-  editorial:
-    "This is a classic dynamic programming problem. The number of ways to reach the nth step is the sum of the number of ways to reach the (n-1)th step and the (n-2)th step, forming a Fibonacci-like sequence.",
-  testcases: [
-    {
-      input: "2",
-      output: "2",
-    },
-    {
-      input: "3",
-      output: "3",
-    },
-    {
-      input: "4",
-      output: "5",
-    },
-  ],
-  examples: {
-    JAVASCRIPT: {
-      input: "n = 2",
-      output: "2",
-      explanation:
-        "There are two ways to climb to the top:\n1. 1 step + 1 step\n2. 2 steps",
-    },
-    PYTHON: {
-      input: "n = 3",
-      output: "3",
-      explanation:
-        "There are three ways to climb to the top:\n1. 1 step + 1 step + 1 step\n2. 1 step + 2 steps\n3. 2 steps + 1 step",
-    },
-    JAVA: {
-      input: "n = 4",
-      output: "5",
-      explanation:
-        "There are five ways to climb to the top:\n1. 1 step + 1 step + 1 step + 1 step\n2. 1 step + 1 step + 2 steps\n3. 1 step + 2 steps + 1 step\n4. 2 steps + 1 step + 1 step\n5. 2 steps + 2 steps",
-    },
-  },
-  codeSnippets: {
-    JAVASCRIPT: `/**
-* @param {number} n
-* @return {number}
-*/
-function climbStairs(n) {
-// Write your code here
-}
-
-// Parse input and execute
-const readline = require('readline');
-const rl = readline.createInterface({
-input: process.stdin,
-output: process.stdout,
-terminal: false
-});
-
-rl.on('line', (line) => {
-const n = parseInt(line.trim());
-const result = climbStairs(n);
-
-console.log(result);
-rl.close();
-});`,
-    PYTHON: `class Solution:
-  def climbStairs(self, n: int) -> int:
-      # Write your code here
-      pass
-
-# Input parsing
-if __name__ == "__main__":
-  import sys
-  
-  # Parse input
-  n = int(sys.stdin.readline().strip())
-  
-  # Solve
-  sol = Solution()
-  result = sol.climbStairs(n)
-  
-  # Print result
-  print(result)`,
-    JAVA: `import java.util.Scanner;
-
-class Main {
-  public int climbStairs(int n) {
-      // Write your code here
-      return 0;
-  }
-  
-  public static void main(String[] args) {
-      Scanner scanner = new Scanner(System.in);
-      int n = Integer.parseInt(scanner.nextLine().trim());
-      
-      // Use Main class instead of Solution
-      Main main = new Main();
-      int result = main.climbStairs(n);
-      
-      System.out.println(result);
-      scanner.close();
-  }
-}`,
-  },
-  referenceSolutions: {
-    JAVASCRIPT: `/**
-* @param {number} n
-* @return {number}
-*/
-function climbStairs(n) {
-// Base cases
-if (n <= 2) {
-  return n;
-}
-
-// Dynamic programming approach
-let dp = new Array(n + 1);
-dp[1] = 1;
-dp[2] = 2;
-
-for (let i = 3; i <= n; i++) {
-  dp[i] = dp[i - 1] + dp[i - 2];
-}
-
-return dp[n];
-
-/* Alternative approach with O(1) space
-let a = 1; // ways to climb 1 step
-let b = 2; // ways to climb 2 steps
-
-for (let i = 3; i <= n; i++) {
-  let temp = a + b;
-  a = b;
-  b = temp;
-}
-
-return n === 1 ? a : b;
-*/
-}
-
-// Parse input and execute
-const readline = require('readline');
-const rl = readline.createInterface({
-input: process.stdin,
-output: process.stdout,
-terminal: false
-});
-
-rl.on('line', (line) => {
-const n = parseInt(line.trim());
-const result = climbStairs(n);
-
-console.log(result);
-rl.close();
-});`,
-    PYTHON: `class Solution:
-  def climbStairs(self, n: int) -> int:
-      # Base cases
-      if n <= 2:
-          return n
-      
-      # Dynamic programming approach
-      dp = [0] * (n + 1)
-      dp[1] = 1
-      dp[2] = 2
-      
-      for i in range(3, n + 1):
-          dp[i] = dp[i - 1] + dp[i - 2]
-      
-      return dp[n]
-      
-      # Alternative approach with O(1) space
-      # a, b = 1, 2
-      # 
-      # for i in range(3, n + 1):
-      #     a, b = b, a + b
-      # 
-      # return a if n == 1 else b
-
-# Input parsing
-if __name__ == "__main__":
-  import sys
-  
-  # Parse input
-  n = int(sys.stdin.readline().strip())
-  
-  # Solve
-  sol = Solution()
-  result = sol.climbStairs(n)
-  
-  # Print result
-  print(result)`,
-    JAVA: `import java.util.Scanner;
-
-class Main {
-  public int climbStairs(int n) {
-      // Base cases
-      if (n <= 2) {
-          return n;
-      }
-      
-      // Dynamic programming approach
-      int[] dp = new int[n + 1];
-      dp[1] = 1;
-      dp[2] = 2;
-      
-      for (int i = 3; i <= n; i++) {
-          dp[i] = dp[i - 1] + dp[i - 2];
-      }
-      
-      return dp[n];
-      
-      /* Alternative approach with O(1) space
-      int a = 1; // ways to climb 1 step
-      int b = 2; // ways to climb 2 steps
-      
-      for (int i = 3; i <= n; i++) {
-          int temp = a + b;
-          a = b;
-          b = temp;
-      }
-      
-      return n == 1 ? a : b;
-      */
-  }
-  
-  public static void main(String[] args) {
-      Scanner scanner = new Scanner(System.in);
-      int n = Integer.parseInt(scanner.nextLine().trim());
-      
-      // Use Main class instead of Solution
-      Main main = new Main();
-      int result = main.climbStairs(n);
-      
-      System.out.println(result);
-      scanner.close();
-  }
-}`,
-  },
-};
-
-// Sample problem data for another type of question
-const sampleStringProblem = {
-  title: "Valid Palindrome",
-  description:
-    "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers. Given a string s, return true if it is a palindrome, or false otherwise.",
-  difficulty: "EASY",
-  tags: ["string", "two pointers"],
-  constraints:
-    "1 <= s.length <= 2 * 10^5\ns consists only of printable ASCII characters.",
-  hints:
-    "Consider using two pointers, one from the start and one from the end, moving towards the center.",
-  editorial:
-    "We can use two pointers approach to check if the string is a palindrome. One pointer starts from the beginning and the other from the end, moving towards each other.",
-  testcases: [
-    {
-      input: "A man, a plan, a canal: Panama",
-      output: "true",
-    },
-    {
-      input: "race a car",
-      output: "false",
-    },
-    {
-      input: " ",
-      output: "true",
-    },
-  ],
-  examples: {
-    JAVASCRIPT: {
-      input: 's = "A man, a plan, a canal: Panama"',
-      output: "true",
-      explanation: '"amanaplanacanalpanama" is a palindrome.',
-    },
-    PYTHON: {
-      input: 's = "A man, a plan, a canal: Panama"',
-      output: "true",
-      explanation: '"amanaplanacanalpanama" is a palindrome.',
-    },
-    JAVA: {
-      input: 's = "A man, a plan, a canal: Panama"',
-      output: "true",
-      explanation: '"amanaplanacanalpanama" is a palindrome.',
-    },
-  },
-  codeSnippets: {
-    JAVASCRIPT: `/**
-   * @param {string} s
-   * @return {boolean}
-   */
-  function isPalindrome(s) {
-    // Write your code here
-  }
-  
-  // Add readline for dynamic input handling
-  const readline = require('readline');
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false
-  });
-  
-  // Process input line
-  rl.on('line', (line) => {
-    // Call solution with the input string
-    const result = isPalindrome(line);
-    
-    // Output the result
-    console.log(result ? "true" : "false");
-    rl.close();
-  });`,
-    PYTHON: `class Solution:
-  def isPalindrome(self, s: str) -> bool:
-  # Write your code here
-    pass
-  
-  # Input parsing
-if __name__ == "__main__":
-  import sys
-  # Read the input string
-  s = sys.stdin.readline().strip()
-      
-  # Call solution
-  sol = Solution()
-  result = sol.isPalindrome(s)
-      
-  # Output result
-  print(str(result).lower())  # Convert True/False to lowercase true/false`,
-    JAVA: `import java.util.Scanner;
-
-public class Main {
-    public static String preprocess(String s) {
-        return s.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-    }
-
-    public static boolean isPalindrome(String s) {
-       
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
-
-        boolean result = isPalindrome(input);
-        System.out.println(result ? "true" : "false");
-    }
-}
-`,
-  },
-  referenceSolutions: {
-    JAVASCRIPT: `/**
-   * @param {string} s
-   * @return {boolean}
-   */
-  function isPalindrome(s) {
-    // Convert to lowercase and remove non-alphanumeric characters
-    s = s.toLowerCase().replace(/[^a-z0-9]/g, '');
-    
-    // Check if it's a palindrome
-    let left = 0;
-    let right = s.length - 1;
-    
-    while (left < right) {
-      if (s[left] !== s[right]) {
-        return false;
-      }
-      left++;
-      right--;
-    }
-    
-    return true;
-  }
-  
-  // Add readline for dynamic input handling
-  const readline = require('readline');
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false
-  });
-  
-  // Process input line
-  rl.on('line', (line) => {
-    // Call solution with the input string
-    const result = isPalindrome(line);
-    
-    // Output the result
-    console.log(result ? "true" : "false");
-    rl.close();
-  });`,
-    PYTHON: `class Solution:
-  def isPalindrome(self, s: str) -> bool:
-    # Convert to lowercase and keep only alphanumeric characters
-    filtered_chars = [c.lower() for c in s if c.isalnum()]
-          
-    # Check if it's a palindrome
-    return filtered_chars == filtered_chars[::-1]
-  
-  # Input parsing
-if __name__ == "__main__":
-  import sys
-  # Read the input string
-  s = sys.stdin.readline().strip()
-    
-  # Call solution
-  sol = Solution()
-  result = sol.isPalindrome(s)
-      
-  # Output result
-  print(str(result).lower())  # Convert True/False to lowercase true/false`,
-    JAVA: `import java.util.Scanner;
-
-public class Main {
-    public static String preprocess(String s) {
-        return s.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-    }
-
-    public static boolean isPalindrome(String s) {
-        s = preprocess(s);
-        int left = 0, right = s.length() - 1;
-
-        while (left < right) {
-            if (s.charAt(left) != s.charAt(right)) return false;
-            left++;
-            right--;
-        }
-
-        return true;
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String input = sc.nextLine();
-
-        boolean result = isPalindrome(input);
-        System.out.println(result ? "true" : "false");
-    }
-}
-`,
-  },
-};
-  const {register, control, handleSubmit, reset, formState: {errors}} = useForm(
+  const {register, control, handleSubmit, reset, formState: {errors, isSubmitting}} = useForm(
     {
       resolver: zodResolver(problemSchema),
       defaultValues: {
         testcases: [{ input: "", output: "" }],
+        examples: [{ input: "", output: "", explanation: "" }],
         tags: [],
-        examples: {
-          JAVASCRIPT: { input: "", output: "", explanation: "" },
-          PYTHON: { input: "", output: "", explanation: "" },
-          JAVA: { input: "", output: "", explanation: "" },
-        },
         codeSnippets: {
-          JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
-          PYTHON: "def solution():\n    # Write your code here\n    pass",
-          JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
+          PYTHON: "def solution():\n    # Write your code here\n    pass\nsolution()",
+          // JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
         },
         referenceSolutions: {
-          JAVASCRIPT: "// Add your reference solution here",
           PYTHON: "# Add your reference solution here",
-          JAVA: "// Add your reference solution here",
+          // JAVA: "// Add your reference solution here",
         },
       }
     }
@@ -567,27 +119,15 @@ public class Main {
     name: "testcases",
   });
 
-  // const {
-  //   fields: tagFields,
-  //   append: appendTag,
-  //   remove: removeTag,
-  //   replace: replaceTags,
-  // } = useFieldArray({
-  //   control,
-  //   name: "tags",
-  // });
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const loadSampleData = () => {
-    const sampleData = sampleType === "DP" ? sampledpData : sampleStringProblem
-    setTags(sampleData.tags);
-    replacetestcases(sampleData.testcases.map((tc) => tc));
-    reset({
-      ...sampleData,
-      tags: sampleData.tags
-    });
-  }
+  const {
+    fields: exampleFields,
+    append: appendExamples,
+    remove: removeExamples,
+    replace: replaceExamples,
+  } = useFieldArray({
+    control,
+    name: "examples",
+  });
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-7xl overflow-y-visible">
@@ -598,39 +138,14 @@ public class Main {
               <FileText className="w-6 h-6 text-primary" />
               <CardTitle>Create Problem</CardTitle>
             </div>
-            <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-              <div className="flex gap-2">
-                <Button
-                  variant={sampleType === "DP" ? "default" : "outline"}
-                  onClick={() => setSampleType("DP")}
-                  size="sm"
-                >
-                  DP Problem
-                </Button>
-                <Button
-                  variant={sampleType === "string" ? "default" : "secondary"}
-                  onClick={() => setSampleType("string")}
-                  size="sm"
-                >
-                  String Problem
-                </Button>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={loadSampleData}
-                className="gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Load Sample
-              </Button>
-            </div>
           </div>
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            {/* Basic Information */}
+          <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-8">
+            
+
+            {/* title */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="title">Title</Label>
@@ -647,6 +162,9 @@ public class Main {
                 )}
               </div>
 
+
+
+              {/* description */}
               <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
@@ -662,6 +180,8 @@ public class Main {
                 )}
               </div>
 
+
+              {/* difficulty */}
               <div className="space-y-2">
                 <Label htmlFor="difficulty">Difficulty</Label>
                 <Controller
@@ -687,9 +207,16 @@ public class Main {
                 )}
               </div>
 
+
+
+              {/* tags */}
               <div className="space-y-2">
-                <Label htmlFor="difficulty">Tags</Label>
-                <SelectMulti
+                <Label htmlFor="tags">Tags</Label>
+                <Controller
+                  name="tags"
+                  control={control}
+                  render={({ field }) => (
+                    <SelectMulti
                             styles={{
                                 control: (base, state) => ({
                                     ...base,
@@ -751,15 +278,22 @@ public class Main {
                             isMulti={true}
                             options={tagOptions}
                             placeholder={"Tags"}
-                            value={tagOptions.filter((tag) => tags.includes(tag.value))}
-                            onChange={(selectedOptions) => setTags(selectedOptions.map((option) => option.value))}
+                            value={field.value}
+                            onChange={field.onChange}
                         />
-                
+                  )}
+                />
+                {errors.tags && (
+                  <p className="text-sm font-medium text-destructive">
+                    {errors.tags.message}
+                  </p>
+                )}
               </div>
             </div>
 
 
-            {/* Test Cases */}
+
+            {/* testcases */}
             <Card>
               <CardHeader className="px-4">
                 <div className="flex items-center justify-between">
@@ -836,15 +370,14 @@ public class Main {
               </CardContent>
             </Card>
 
-            {/* Code Editor Sections */}
-            <Tabs defaultValue="JAVASCRIPT" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="JAVASCRIPT">JavaScript</TabsTrigger>
+            {/* editor - code snippets */}
+            <Tabs defaultValue="PYTHON" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-1">
                 <TabsTrigger value="PYTHON">Python</TabsTrigger>
-                <TabsTrigger value="JAVA">Java</TabsTrigger>
+                {/* <TabsTrigger value="JAVA">Java</TabsTrigger> */}
               </TabsList>
               
-              {["JAVASCRIPT", "PYTHON", "JAVA"].map((language) => (
+              {["PYTHON"].map((language) => (
                 <TabsContent key={language} value={language} className="space-y-6">
                   <Card>
                     <CardHeader className="px-4">
@@ -887,7 +420,6 @@ public class Main {
                         )}
                       </div>
 
-                      {/* Reference Solution */}
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <CheckCircle2 className="w-5 h-5 text-green-500" />
@@ -922,52 +454,102 @@ public class Main {
                           </p>
                         )}
                       </div>
-
-                      {/* Examples */}
-                      <div className="space-y-2">
-                        <Label>Example</Label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                          <div className="space-y-2">
-                            <Label>Input</Label>
-                            <Textarea
-                              {...register(`examples.${language}.input`)}
-                              placeholder="Example input"
-                              className="min-h-20"
-                            />
-                            {errors.examples?.[language]?.input && (
-                              <p className="text-sm font-medium text-destructive">
-                                {errors.examples[language].input.message}
-                              </p>
-                            )}
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Output</Label>
-                            <Textarea
-                              {...register(`examples.${language}.output`)}
-                              placeholder="Example output"
-                              className="min-h-20"
-                            />
-                            {errors.examples?.[language]?.output && (
-                              <p className="text-sm font-medium text-destructive">
-                                {errors.examples[language].output.message}
-                              </p>
-                            )}
-                          </div>
-                          <div className="space-y-2 md:col-span-2">
-                            <Label>Explanation</Label>
-                            <Textarea
-                              {...register(`examples.${language}.explanation`)}
-                              placeholder="Explain the example"
-                              className="min-h-24"
-                            />
-                          </div>
-                        </div>
-                      </div>
                     </CardContent>
                   </Card>
                 </TabsContent>
               ))}
             </Tabs>
+
+            {/* examples */}
+            <Card>
+              <CardHeader className="px-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5" />
+                    <CardTitle className="text-lg">Examples</CardTitle>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => appendExamples({ input: "", output: "", explanation: "" })}
+                  >
+                    <Plus className="w-4 h-4 mr-1" /> Add an Example
+                  </Button>
+                </div>
+              </CardHeader>
+
+              <CardContent className="px-4 space-y-6">
+                {exampleFields.map((field, index) => (
+                  <Card key={field.id}>
+                    <CardHeader className="px-4">
+                      <div className="flex justify-between items-center">
+                        <CardTitle className="text-base">
+                          Example {index + 1}
+                        </CardTitle>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive"
+                          onClick={() => removeExamples(index)}
+                          disabled={exampleFields.length === 1}
+                        >
+                          <Trash2 className="w-4 h-4 mr-1" /> Remove
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="px-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                        <div className="space-y-2">
+                          <Label>Input</Label>
+                          <Textarea
+                            {...register(`examples.${index}.input`)}
+                            placeholder="Enter test case input"
+                            className="min-h-24"
+                          />
+                          {errors.examples?.[index]?.input && (
+                            <p className="text-sm font-medium text-destructive">
+                              {errors.examples[index].input.message}
+                            </p>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Output</Label>
+                          <Textarea
+                            {...register(`examples.${index}.output`)}
+                            placeholder="Enter output"
+                            className="min-h-24"
+                          />
+                          {errors.examples?.[index]?.output && (
+                            <p className="text-sm font-medium text-destructive">
+                              {errors.examples[index].output.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="space-y-2 mt-4">
+                          <Label>Explanation</Label>
+                          <Textarea
+                            {...register(`examples.${index}.explanation`)}
+                            placeholder="Enter explanation"
+                            className="min-h-24"
+                          />
+                          {errors.examples?.[index]?.explanation && (
+                            <p className="text-sm font-medium text-destructive">
+                              {errors.examples[index].explanation.message}
+                            </p>
+                          )}
+                        </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                {errors.examples && !Array.isArray(errors.examples) && (
+                  <p className="text-sm font-medium text-destructive">
+                    {errors.examples.message}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Additional Information */}
             <Card>
@@ -1010,9 +592,21 @@ public class Main {
               </CardContent>
             </Card>
 
-            <div className="flex justify-end pt-4 border-t">
-              <Button type="submit" className="gap-2" disabled={isLoading}>
-                {isLoading ? (
+            <div className="flex justify-end pt-4 border-t gap-4">
+              <Button 
+                type="button" 
+                variant="secondary" 
+                onClick={() => reset()}
+                disabled={isLoading || isSubmitting}
+              >
+                Reset
+              </Button>
+              <Button 
+                type="submit" 
+                className="gap-2" 
+                disabled={isLoading || isSubmitting}
+              >
+                {(isLoading || isSubmitting) ? (
                   <>
                     <span className="loading loading-spinner"></span>
                     Creating...

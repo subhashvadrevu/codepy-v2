@@ -29,6 +29,10 @@ import { dracula, github } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { useThemeStore } from "@/store/useThemeStore";
 import { Button } from "./ui/button";
 import { useAuthStore } from "@/store/useAuthStore";
+import ReactMarkdown from 'react-markdown'
+import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+
 
 
 export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubmission, expOut, submissions, isLoadingSubmissions, isRunCode}) {
@@ -36,14 +40,6 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
 
   const { theme } = useThemeStore();
   const { authenticatedUser } = useAuthStore();
-
-  const tabContent = [
-    {
-      key: "editorial",
-      title: "Editorial",
-      content: problem?.editorial || "No editorial available.",
-    },
-  ];
 
   const formatDate = (rawDate) => {
   const date = new Date(rawDate);
@@ -79,7 +75,7 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
             Editorial
             </TabsTrigger>
             <TabsTrigger value="solutions">Solutions</TabsTrigger>
-            <TabsTrigger value="testcases">Testcases</TabsTrigger>
+            {/* <TabsTrigger value="testcases">Testcases</TabsTrigger> */}
             <TabsTrigger value="submission">Submissions</TabsTrigger>
             <TabsTrigger value="result">Result</TabsTrigger>
         </TabsList>
@@ -103,7 +99,9 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
                         </div>
 
                 
-                        <p className="text-black dark:text-white text-md whitespace-pre-wrap break-words">{problem?.description}</p>
+                        <div className="text-black dark:text-white text-md whitespace-pre-wrap break-words">
+                          <ReactMarkdown>{problem?.description}</ReactMarkdown>
+                        </div>
 
                 
                         {problem?.examples && (
@@ -138,9 +136,13 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
                                 <h4 className="mt-4 text-black dark:text-white">Constraints</h4>
                                 {/* <p className="whitespace-pre-wrap font-mono bg-[#f5f5f4] dark:bg-[#27272b] rounded-lg w-fit p-2">{problem.constraints}</p> */}
                                 <ul className="list-disc whitespace-pre-wrap font-mono bg-[#f5f5f4] dark:bg-[#27272b] rounded-lg p-2 pl-8">
-                                    {problem.constraints.split("\n").map((c, index) => (
-                                        <li key={index}>{c}</li>
-                                    ))}
+                                    {problem.constraints.map((c, index) => { 
+                                      const constraint = `<p>${c}</p>`
+                                      return (  
+                                        <li key={index}>
+                                          <Markdown rehypePlugins={[rehypeRaw]}>{constraint}</Markdown>
+                                        </li>
+                                    )})}
                                 </ul>
                             </div>
                         )}
@@ -151,18 +153,16 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
 
 
         
-        {tabContent.map((tab) => (
-            <TabsContent value={tab.key} key={tab.key} className="flex-1">
+        <TabsContent value="editorial" className="flex-1">
             <Card className="p-4 h-full">
                 <ScrollArea className="h-full pr-2">
-                <h2 className="text-xl font-semibold mb-2">{tab.title}</h2>
+                <h2 className="text-xl font-semibold mb-2">Editorial</h2>
                 <p className="text-md whitespace-pre-wrap text-muted-foreground">
-                    {tab.content || "Loading..."}
+                    {problem?.editorial || "Will be updated soon ...."}
                 </p>
                 </ScrollArea>
             </Card>
-            </TabsContent>
-        ))}
+        </TabsContent>
 
         
         <TabsContent value="solutions">
@@ -203,7 +203,7 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
         
         
         
-        <TabsContent value="testcases">
+        {/* <TabsContent value="testcases">
             <Card className="p-4 h-full">
             <ScrollArea className="h-full pr-2">
                 <h2 className="text-xl font-semibold mb-2">Testcases</h2>
@@ -240,7 +240,7 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
                 )}
                 </ScrollArea>
             </Card>
-        </TabsContent>
+        </TabsContent> */}
         
         
         
