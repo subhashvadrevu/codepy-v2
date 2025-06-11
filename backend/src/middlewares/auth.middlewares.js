@@ -30,7 +30,8 @@ export const authMiddleware = async(req, res, next) => {
                 name: true, 
                 email: true,
                 username: true,
-                role: true
+                role: true,
+                isVerified: true,
             }
         });
 
@@ -78,3 +79,32 @@ export const checkAdmin = async(req, res, next) => {
         })
     }
 }
+
+
+export const isEmailVerified = async(req, res, next) => {
+    const id = req.user.id;
+    try {
+        const user = await db.user.findUnique({
+            where: {
+                id
+            }, 
+            select: {
+                isVerified: true
+            }
+        });
+
+        if(!user || !user.isVerified) {
+            return res.status(403).json({
+                error: "Access Denied, Verify your email first!"
+            });
+        }
+
+        next();
+        
+    } catch (error) {
+        console.log("email verify status check : ", error);
+        return res.status(500).json({
+            error: "Error checking user verification status"
+        });
+    }
+};
