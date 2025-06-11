@@ -10,8 +10,8 @@ const AdminPage = () => {
 
   return (
     <div className='w-full h-screen flex flex-col items-center justify-center space-y-4'>
-        <Button onClick={() => {authenticatedUser ? navigate("/admin/addProblem") : "" }} >Add Problem</Button>
-        <Button onClick={() => {authenticatedUser ? navigate("/admin/deleteProblem") : "" }}>Delete Problem</Button>
+        <Button onClick={() => {authenticatedUser && authenticatedUser.isVerified && authenticatedUser.role == "ADMIN" ? navigate("/admin/addProblem") : "" }} >Add Problem</Button>
+        <Button onClick={() => {authenticatedUser && authenticatedUser.isVerified && authenticatedUser.role == "ADMIN" ? navigate("/admin/deleteProblem") : "" }}>Delete Problem</Button>
     </div>
   )
 }
