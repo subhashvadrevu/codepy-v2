@@ -16,11 +16,12 @@ import ProblemPage from './pages/ProblemPage.jsx';
 import { useThemeStore } from './store/useThemeStore.js';
 import ViewAllSubmissions from './components/ViewAllSubmissions.jsx';
 import DeleteProblemPage from './pages/DeleteProblemPage.jsx';
+import VerifyOtpPage from './pages/VerifyOtpPage.jsx';
 
 const App = () => {
 
   const { theme, toggleTheme } = useThemeStore();
-  const { authenticatedUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { authenticatedUser, checkAuth, isCheckingAuth  } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
@@ -44,13 +45,14 @@ const App = () => {
         <Toaster />
         <Routes>
           <Route path='/' element={<Layout />}>
-            <Route index element={authenticatedUser ? <HomePage />: <Navigate to={"/login"} />} />
-            <Route path='/problems' element={authenticatedUser ? <HomePage />: <Navigate to={"/login"} />} />
-            <Route path='/login' element={!authenticatedUser ? <LoginPage /> : <Navigate to={"/"} /> } />
-            <Route path='/signup' element={!authenticatedUser ? <SignupPage /> : <Navigate to={"/"} /> } /> 
-            <Route path='/me' element={authenticatedUser ? <ProfilePage /> : <Navigate to={"/"} /> } />
-            <Route path="/viewAllSubmissions" element={authenticatedUser ? <ViewAllSubmissions /> : <Navigate to={"/"} /> } />
-            <Route path='/admin' element={<AdminPanelPage />}>
+            <Route index element={authenticatedUser ? authenticatedUser.isVerified ? <HomePage /> : <Navigate to={"/verify"} /> :  <Navigate to={"/login"} /> } />
+            <Route path='/problems' element={authenticatedUser ? authenticatedUser.isVerified ? <HomePage /> : <Navigate to={"/verify"} /> :  <Navigate to={"/login"} />} />
+            <Route path='/login' element={!authenticatedUser ? <LoginPage /> : !authenticatedUser.isVerified ? <Navigate to={"/verify"} /> : <Navigate to={"/"} /> } />
+            <Route path='/signup' element={!authenticatedUser ? <SignupPage /> : !authenticatedUser.isVerified ? <Navigate to={"/verify"} /> : <Navigate to={"/"} /> } /> 
+            <Route path="/verify" element={!authenticatedUser ? <Navigate to={"/login"} /> : !authenticatedUser.isVerified ? <VerifyOtpPage /> : <Navigate to={"/"} /> } /> 
+            <Route path='/me' element={authenticatedUser && authenticatedUser.isVerified ? <ProfilePage /> : <Navigate to={"/login"} /> } />
+            <Route path="/viewAllSubmissions" element={authenticatedUser && authenticatedUser.isVerified ? <ViewAllSubmissions /> : <Navigate to={"/login"} /> } />
+            <Route path='/admin' element={authenticatedUser && authenticatedUser.isVerified && authenticatedUser.role == "ADMIN" ? <AdminPanelPage /> : <Navigate to={"/"} /> }>
               <Route index element={<AdminPage />} />
               <Route path='/admin/addProblem' element={<AddProblemPage />} />
               <Route path='/admin/deleteProblem' element={<DeleteProblemPage />} />
