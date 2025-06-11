@@ -3,12 +3,14 @@ import { axiosInstance } from "@/utilities/axios";
 import toast from "react-hot-toast";
 
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
     authenticatedUser: null,
     isSigningUp: false,
     isLoggingIn: false,
     isCheckingAuth: false,
     isDeletingAccount: false,
+    isVerifying: false,
+    isGenerating: false,
 
 
     checkAuth: async() => {
@@ -53,7 +55,7 @@ export const useAuthStore = create((set) => ({
             toast.success(res.data.message);
         } catch (error) {
             console.log("error logging in : ", error);
-            toast.error(error.response.data.error);
+            toast.error(error.response.data.error || "Error logging in");
         } finally {
             set({ isLoggingIn: false });
         }
@@ -67,7 +69,7 @@ export const useAuthStore = create((set) => ({
             toast.success("Logout successful");
         } catch (error) {
             console.log("Error logging out: ", error);
-            toast.error(error.response.data.error);
+            toast.error(error);
         }
     },
 
@@ -83,6 +85,44 @@ export const useAuthStore = create((set) => ({
             toast.error(error.response.data.error);
         } finally {
             set({ isDeletingAccount: false });
+        }
+    },
+
+    generateOtp: async() => {
+        try {
+            set({ isGenerating: true });
+            const res = await axiosInstance.patch("/auth/generateOtp");
+            console.log("otp gen: ", res);
+            toast.success(res.data.message);
+        } catch (error) {
+            console.log('otp gen err: ', error);
+            toast.error(error.response.data.error || "Error generating OTP");
+        } finally { 
+            set({ isGenerating: false });
+        }
+    },
+
+    verifyEmail: async(data) => {
+        try {
+        
+            set({ isVerifying: true });
+
+            const res = await axiosInstance.post("/auth/verifyOtp", data);
+            const updatedUser = {
+                ...get().authenticatedUser,
+                isVerified: true
+            };  
+            set({ authenticatedUser: updatedUser });
+
+            console.log("verify otp res:", res);
+            toast.success(res.data.message);
+            
+
+        } catch (error) {
+            console.log("error in email verify : ", error);
+            toast.error(error.response.data.error || "Error verifying email");
+        } finally {
+            set({ isVerifying: false });
         }
     },
 }));
