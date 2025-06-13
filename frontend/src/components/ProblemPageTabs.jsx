@@ -100,7 +100,7 @@ export function TabsDemo({ activeTab, setActiveTab, problem, submission, runSubm
 
                 
                         <div className="text-black dark:text-white text-md whitespace-pre-wrap break-words">
-                          <ReactMarkdown>{problem?.description}</ReactMarkdown>
+                          <ReactMarkdown>{"\n".join(problem.description.split("\n"))}</ReactMarkdown>
                         </div>
 
                 
