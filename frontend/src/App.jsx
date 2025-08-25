@@ -25,13 +25,21 @@ const App = () => {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, []);
 
   useEffect(() => {
     document.body.className = theme;
   }, [theme]);
 
   if(isCheckingAuth && !authenticatedUser) {
+    return (
+      <div className='flex items-center justify-center h-screen w-full'>
+        <Loader className='size-10 animate-spin' />
+      </div>
+    )
+  }
+
+  if(!authenticatedUser) {
     return (
       <div className='flex items-center justify-center h-screen w-full'>
         <Loader className='size-10 animate-spin' />
