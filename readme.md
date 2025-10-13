@@ -68,7 +68,7 @@
     - npm i cookie-parser 
     - npm i cors
 
-    - in git bash : openssl rand -hex 32 (for jwt secret)
+
 
 - ### Frontend
     - npx react-ignite@latest

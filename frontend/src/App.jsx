@@ -39,14 +39,6 @@ const App = () => {
     )
   }
 
-  if(!authenticatedUser) {
-    return (
-      <div className='flex items-center justify-center h-screen w-full'>
-        <Loader className='size-10 animate-spin' />
-      </div>
-    )
-  }
-
   return (
     <>
       <div className={`dark:bg-[#18181b] ${theme} flex flex-col items-center justify-start w-full h-screen`}>

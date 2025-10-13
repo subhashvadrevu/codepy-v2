@@ -20,16 +20,18 @@ import { getLangId } from '@/utilities/getLanguage';
 
 const ProblemPage = () => {
   const { id } = useParams();
+
+  useEffect(() => {
+    getProblemById(id);
+  }, []);
+
+
   const { getProblemById, problem, isProblemLoading } = useProblemStore();
   const [code, setCode] = useState('');
   const [activeTab, setActiveTab] = useState('description');
   const [selectedLang, setSelectedLang] = useState('python');
   const [bookmarked, setBookmarked] = useState(false);
   const [expOut, setExpOut] = useState(problem?.testcases.slice(0,3).map(({input, output}) => output) || []);
-
-  useEffect(() => {
-    getProblemById(id);
-  }, [id]);
 
   useEffect(() => {
     setCode(problem?.codeSnippets?.[selectedLang.toUpperCase()] || '');
