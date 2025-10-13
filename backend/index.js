@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://www.codepy.live',
     credentials: true,
     // origin: ["https://codepy-v2.vercel.app", "https://www.codepy.live"],
     // credentials: true
